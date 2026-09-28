@@ -189,7 +189,11 @@
         "XXXX",
         "TBC",
         "TBA"
-      ]
+      ],
+      "markPrefixes": {
+        "E": "existing",
+        "S": "shed"
+      }
     }
   },
   "stages": [

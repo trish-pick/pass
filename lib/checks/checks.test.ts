@@ -275,9 +275,27 @@ describe("schedule_tags_match", () => {
     const out = await messages((await import("./schedule-tags-match")).check, [plan, schedule]);
     expect(out).toEqual([
       "Window 4 appears twice in the window schedule.",
-      "Window tag (w7) isn't in the window schedule.",
+      "Window 7 (tag (w7)) isn't in the window schedule.",
       "Window 4 is in the schedule but isn't tagged on any plan or elevation.",
       "Window numbering skips 3 (goes from 2 to 4).",
+    ]);
+  });
+
+  it("names marks by the practice's prefixes and checks each series for gaps", async () => {
+    const schedule = sheet({ number: "A05", type: "schedule" });
+    schedule.textBlocks = [
+      line("Window Schedule", 340, 73, 16),
+      line("Mark", 103, 96, 9),
+      ...["1", "E1", "E2", "E4", "S1"].map((m, i) => line(m, 93, 115 + i * 11, 9)),
+    ];
+    const plan = sheet({ number: "A03", text: ["(w1)", "(wE1)", "(wE2)", "(wE4)", "(wS2)"] });
+    const out = await messages((await import("./schedule-tags-match")).check, [plan, schedule], {}, {
+      profile: { ...context([]).profile, conventions: { markPrefixes: { E: "existing", S: "shed" } } },
+    });
+    expect(out).toEqual([
+      "Shed window S2 (tag (wS2)) isn't in the window schedule.",
+      "Shed window S1 is in the schedule but isn't tagged on any plan or elevation.",
+      "Existing window numbering skips E3 (goes from E2 to E4).",
     ]);
   });
 

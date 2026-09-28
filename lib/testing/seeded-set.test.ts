@@ -64,7 +64,7 @@ describe("seeded set acceptance", () => {
     has("forbidden_text", "B04", SEEDED_ERRORS.draftText);
     has("spelling", "B02", SEEDED_ERRORS.misspelling);
     has("cover_sheet_consistent", "B01", SEEDED_ERRORS.coverCouncil);
-    has("schedule_tags_match", "B03", `\\(w${SEEDED_ERRORS.untaggedWindow}\\) isn't in the window schedule`);
+    has("schedule_tags_match", "B03", `tag \\(w${SEEDED_ERRORS.untaggedWindow}\\)\\) isn.t in the window schedule`);
     has("schedule_tags_match", "B04", "Window 3 is in the schedule but isn't tagged");
   });
 

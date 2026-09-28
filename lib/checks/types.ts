@@ -61,6 +61,8 @@ export type PracticeConventions = {
   registerHeadings?: string[];
   /** Sheet type keywords: a sheet whose title contains a keyword gets that type. */
   sheetTypes?: Record<string, string[]>;
+  /** What a letter before a window or door mark means, e.g. { E: "existing", S: "shed" }. */
+  markPrefixes?: Record<string, string>;
   /** Text left in by templates that means a field was never filled in, e.g. "Author". */
   placeholders?: string[];
 };

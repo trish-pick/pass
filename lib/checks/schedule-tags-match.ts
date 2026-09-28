@@ -47,6 +47,14 @@ export const check: Check = {
       },
     ];
     const maxGap = numberParam(params, "maxGap", 3);
+    const prefixes = Object.fromEntries(
+      Object.entries(ctx.profile.conventions.markPrefixes ?? {}).map(([k, v]) => [k.toLowerCase(), v]),
+    );
+    /** "Existing window E2", "Shed door S1", "Window 4". */
+    const named = (kind: Kind["name"], mark: string) => {
+      const meaning = prefixes[mark.match(/^[A-Za-z]+/)?.[0].toLowerCase() ?? ""];
+      return meaning ? cap(`${meaning} ${kind} ${mark}`) : `${cap(kind)} ${mark}`;
+    };
     const findings: FindingInput[] = [];
 
     for (const kind of kinds) {
@@ -82,7 +90,7 @@ export const check: Check = {
         if (scheduled.has(m.key)) {
           findings.push({
             sheetId: m.sheet.id,
-            message: `${cap(kind.name)} ${m.mark} appears twice in the ${kind.name} schedule.`,
+            message: `${named(kind.name, m.mark)} appears twice in the ${kind.name} schedule.`,
             bbox: m.bbox,
           });
         } else scheduled.set(m.key, m);
@@ -96,7 +104,7 @@ export const check: Check = {
         reported.add(id);
         findings.push({
           sheetId: t.sheet.id,
-          message: `${cap(kind.name)} tag ${t.text} isn't in the ${kind.name} schedule.`,
+          message: `${named(kind.name, t.key.toUpperCase())} (tag ${t.text}) isn't in the ${kind.name} schedule.`,
           bbox: t.bbox,
         });
       }
@@ -107,27 +115,34 @@ export const check: Check = {
         if (!tagged.has(m.key)) {
           findings.push({
             sheetId: m.sheet.id,
-            message: `${cap(kind.name)} ${m.mark} is in the schedule but isn't tagged on any plan or elevation.`,
+            message: `${named(kind.name, m.mark)} is in the schedule but isn't tagged on any plan or elevation.`,
             bbox: m.bbox,
           });
         }
       }
 
-      // Small gaps in numeric marks.
-      const numbers = [...scheduled.values()]
-        .map((m) => (/^\d+$/.test(m.key) ? Number(m.key) : null))
-        .filter((n): n is number => n !== null)
-        .sort((a, b) => a - b);
-      for (let i = 1; i < numbers.length; i++) {
-        const missing = numbers[i] - numbers[i - 1] - 1;
-        if (missing >= 1 && missing <= maxGap) {
-          const gap = Array.from({ length: missing }, (_, k) => numbers[i - 1] + k + 1);
-          findings.push({
-            sheetId: schedules[0].sheet.id,
-            message: `${cap(kind.name)} numbering skips ${gap.join(", ")} (goes from ${numbers[i - 1]} to ${numbers[i]}).`,
-            bbox: schedules[0].schedule.bbox,
-            severity: "minor",
-          });
+      // Small gaps in the numbering of each series (1, 2, 3... and E1, E2... separately).
+      const series = new Map<string, number[]>();
+      for (const m of scheduled.values()) {
+        const parts = m.mark.match(/^([A-Za-z]*)(\d+)$/);
+        if (!parts) continue;
+        const prefix = parts[1].toUpperCase();
+        series.set(prefix, [...(series.get(prefix) ?? []), Number(parts[2])]);
+      }
+      for (const [prefix, list] of series) {
+        const numbers = [...new Set(list)].sort((a, b) => a - b);
+        for (let i = 1; i < numbers.length; i++) {
+          const missing = numbers[i] - numbers[i - 1] - 1;
+          if (missing >= 1 && missing <= maxGap) {
+            const gap = Array.from({ length: missing }, (_, k) => `${prefix}${numbers[i - 1] + k + 1}`);
+            const label = prefix ? named(kind.name, prefix).replace(new RegExp(`\\s${prefix}$`), "") : cap(kind.name);
+            findings.push({
+              sheetId: schedules[0].sheet.id,
+              message: `${label} numbering skips ${gap.join(", ")} (goes from ${prefix}${numbers[i - 1]} to ${prefix}${numbers[i]}).`,
+              bbox: schedules[0].schedule.bbox,
+              severity: "minor",
+            });
+          }
         }
       }
     }
