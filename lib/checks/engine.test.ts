@@ -65,3 +65,16 @@ describe("runChecklist", () => {
     expect(progress).toEqual([1, 2, 3]);
   });
 });
+
+describe("appliesTo", () => {
+  it("supports include lists, exclusions and no filter", async () => {
+    const { appliesTo } = await import("./engine");
+    expect(appliesTo("plan", null)).toBe(true);
+    expect(appliesTo("plan", ["plan"])).toBe(true);
+    expect(appliesTo("elevation", ["plan"])).toBe(false);
+    expect(appliesTo(null, ["plan"])).toBe(false);
+    expect(appliesTo("cover", ["!cover"])).toBe(false);
+    expect(appliesTo(null, ["!cover"])).toBe(true);
+    expect(appliesTo("plan", ["!cover"])).toBe(true);
+  });
+});

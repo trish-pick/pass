@@ -1,4 +1,4 @@
-import type { PracticeProfile, TextBlock } from "@/lib/checks/types";
+import type { CheckContext, ParsedSheet, PracticeProfile, StandardNote, TextBlock } from "@/lib/checks/types";
 
 /** A text line at (x, y). Width is estimated from the text length. */
 export function line(text: string, x: number, y: number, size = 6): TextBlock {
@@ -49,4 +49,45 @@ export function titleBlockLines(values: {
   if (values.drawnBy) lines.push(line(values.drawnBy, 1091, 701, 10));
   if (values.date) lines.push(line(values.date, 1024, 722, 10));
   return lines;
+}
+
+
+let nextPage = 0;
+
+/** A parsed sheet for check tests. Title block values get boxes at fixed spots so findings can point at them. */
+export function sheet(opts: {
+  number: string | null;
+  title?: string;
+  type?: string | null;
+  titleBlock?: Record<string, string>;
+  text?: string[];
+  pageIndex?: number;
+}): ParsedSheet {
+  const pageIndex = opts.pageIndex ?? nextPage++;
+  const titleBlock = { ...(opts.number ? { sheet_number: opts.number } : {}), ...(opts.titleBlock ?? {}) };
+  return {
+    id: `sheet-${pageIndex}`,
+    pageIndex,
+    width: 1190,
+    height: 842,
+    sheetNumber: opts.number,
+    sheetTitle: opts.title ?? null,
+    sheetType: opts.type ?? null,
+    titleBlock,
+    titleBlockBoxes: Object.fromEntries(Object.keys(titleBlock).map((k, i) => [k, { x: 1000, y: 700 + i * 10, width: 40, height: 8 }])),
+    textBlocks: (opts.text ?? []).map((t, i) => line(t, 40, 40 + i * 12, 8)),
+    imagePath: null,
+  };
+}
+
+export function context(sheets: ParsedSheet[], overrides: Partial<CheckContext> = {}): CheckContext {
+  return {
+    project: { name: "Sample Project", projectNumber: null, address: null },
+    drawingSet: { revision: "Rev01", stageId: "stage-bd", stageName: "Building Documentation" },
+    sheets,
+    profile: testProfile,
+    standardNotes: [] as StandardNote[],
+    dictionary: [],
+    ...overrides,
+  };
 }

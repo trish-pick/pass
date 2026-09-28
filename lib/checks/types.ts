@@ -31,6 +31,9 @@ export type ParsedSheet = {
   sheetTitle: string | null;
   sheetType: string | null;
   titleBlock: Record<string, string>;
+  /** Where each title block value was found, for pointing findings at it. */
+  titleBlockBoxes?: Record<string, BBox>;
+  /** Text lines in the order MuPDF extracted them (paragraphs stay together). */
   textBlocks: TextBlock[];
   /** Storage path of the rendered page image, for AI checks. */
   imagePath: string | null;

@@ -5,7 +5,10 @@ export type ChecklistItemInput = {
   checkType: string;
   params: Record<string, unknown>;
   severity: Severity;
-  /** Sheet types this item applies to. Null or empty means all sheets. */
+  /**
+   * Sheet types this item applies to. Null or empty means all sheets.
+   * Entries starting with "!" exclude a type, e.g. ["!cover"] is every sheet except the cover.
+   */
   appliesTo: string[] | null;
 };
 
@@ -37,10 +40,7 @@ export async function runChecklist(
     if (!check) {
       errors.push({ checklistItemId: item.id, checkType: item.checkType, error: "Unknown check type" });
     } else {
-      const sheets =
-        item.appliesTo && item.appliesTo.length > 0
-          ? ctx.sheets.filter((s) => s.sheetType && item.appliesTo!.includes(s.sheetType))
-          : ctx.sheets;
+      const sheets = ctx.sheets.filter((s) => appliesTo(s.sheetType, item.appliesTo));
 
       try {
         const results = await check.run({ ...ctx, sheets }, item.params);
@@ -65,4 +65,13 @@ export async function runChecklist(
   }
 
   return { findings, errors };
+}
+
+export function appliesTo(sheetType: string | null, filter: string[] | null): boolean {
+  if (!filter || filter.length === 0) return true;
+  const include = filter.filter((f) => !f.startsWith("!"));
+  const exclude = filter.filter((f) => f.startsWith("!")).map((f) => f.slice(1));
+  if (sheetType && exclude.includes(sheetType)) return false;
+  if (include.length === 0) return true;
+  return sheetType !== null && include.includes(sheetType);
 }

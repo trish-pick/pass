@@ -145,5 +145,358 @@
         "TBA"
       ]
     }
-  }
+  },
+  "stages": [
+    "Concept",
+    "Planning",
+    "Building Documentation",
+    "Construction"
+  ],
+  "standardNotes": [
+    {
+      "code": "SCALE",
+      "stage": null,
+      "required": true,
+      "text": "Do not scale off drawings, contact designer if you require further clarification. Written dimensions override scaled dimensions."
+    },
+    {
+      "code": "DISCLAIMER",
+      "stage": "Building Documentation",
+      "required": true,
+      "text": "All plans, elevations and sections should be read in conjunction with accredited engineering drawings. Structural engineers' certificates may be required certify structural design, wind classifications and/or soil conditions, this work is outside the scope of this drafting service. The drafter does not accept any responsibility for any errors or omissions in the plans due to wrongly supplied information, nor for misconstruction, interpretation, or on-site variations."
+    },
+    {
+      "code": "GEN-NOTES",
+      "stage": "Building Documentation",
+      "required": true,
+      "text": "Check & verify all dimensions & levels on site. Written dimensions to take preference over scaled. All work to be strictly in accordance with NCC, all codes & local authority by-laws. All dimensions indicated are frame to frame and do not allow for wall linings."
+    },
+    {
+      "code": "BOUNDARY",
+      "stage": null,
+      "required": false,
+      "text": "Boundary lines and final position of building works are to be confirmed on site prior to construction works starting by registered surveyor."
+    }
+  ],
+  "dictionary": [
+    "blackwood",
+    "breaky",
+    "bsn",
+    "chillingham",
+    "colorbond",
+    "crushfold",
+    "csd",
+    "doggo",
+    "dolerite",
+    "dorma",
+    "ens",
+    "fsd",
+    "gpo",
+    "hardie",
+    "haus",
+    "hwc",
+    "ilume",
+    "linea",
+    "passiv",
+    "passivhaus",
+    "pickersgill",
+    "pwdr",
+    "rbm",
+    "shr",
+    "surfmist",
+    "tas",
+    "taswater",
+    "tcp",
+    "trish",
+    "velux",
+    "vergola",
+    "weathergroove",
+    "weathertex",
+    "wir",
+    "wpb"
+  ],
+  "checklists": [
+    {
+      "stage": "Concept",
+      "name": "Concept pre-issue checklist",
+      "items": [
+        {
+          "label": "Sheet numbers follow the numbering pattern",
+          "check_type": "sheet_number_format",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "No duplicate, missing or out-of-order sheets",
+          "check_type": "sheet_number_sequence",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Drawing register matches the set",
+          "check_type": "sheet_index_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Title block details consistent",
+          "check_type": "title_block_consistent",
+          "severity": "major",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "No placeholder or draft text",
+          "check_type": "forbidden_text",
+          "severity": "major",
+          "params": {
+            "phrases": [
+              "TO BE UPDATED",
+              "XXXX",
+              "TBC",
+              "TBA"
+            ]
+          }
+        },
+        {
+          "label": "Spelling",
+          "check_type": "spelling",
+          "severity": "minor",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "stage": "Planning",
+      "name": "Planning pre-issue checklist",
+      "items": [
+        {
+          "label": "Sheet numbers follow the numbering pattern",
+          "check_type": "sheet_number_format",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "No duplicate, missing or out-of-order sheets",
+          "check_type": "sheet_number_sequence",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Drawing register matches the set",
+          "check_type": "sheet_index_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Title block complete on every sheet",
+          "check_type": "title_block_complete",
+          "severity": "major",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Title block details consistent",
+          "check_type": "title_block_consistent",
+          "severity": "major",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Revision matches the set revision",
+          "check_type": "revision_consistent",
+          "severity": "critical",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Sheet references point to sheets in the set",
+          "check_type": "callout_references",
+          "severity": "major",
+          "params": {
+            "prefixes": [
+              "A",
+              "B"
+            ]
+          }
+        },
+        {
+          "label": "Scale note on every sheet",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "SCALE"
+            ],
+            "scope": "every_sheet"
+          },
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Boundary note on the site plan",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "BOUNDARY"
+            ],
+            "scope": "every_sheet"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "No placeholder or draft text",
+          "check_type": "forbidden_text",
+          "severity": "major",
+          "params": {
+            "phrases": [
+              "TO BE UPDATED",
+              "XXXX",
+              "TBC",
+              "TBA"
+            ]
+          }
+        },
+        {
+          "label": "Spelling",
+          "check_type": "spelling",
+          "severity": "minor",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "stage": "Building Documentation",
+      "name": "Building Documentation pre-issue checklist",
+      "items": [
+        {
+          "label": "Sheet numbers follow the numbering pattern",
+          "check_type": "sheet_number_format",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "No duplicate, missing or out-of-order sheets",
+          "check_type": "sheet_number_sequence",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Drawing register matches the set",
+          "check_type": "sheet_index_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Title block complete on every sheet",
+          "check_type": "title_block_complete",
+          "severity": "major",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Title block details consistent",
+          "check_type": "title_block_consistent",
+          "severity": "major",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Revision matches the set revision",
+          "check_type": "revision_consistent",
+          "severity": "critical",
+          "params": {},
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "Sheet references point to sheets in the set",
+          "check_type": "callout_references",
+          "severity": "major",
+          "params": {
+            "prefixes": [
+              "A",
+              "B"
+            ]
+          }
+        },
+        {
+          "label": "Scale note and disclaimer on every sheet",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "SCALE",
+              "DISCLAIMER"
+            ],
+            "scope": "every_sheet"
+          },
+          "applies_to": [
+            "!cover"
+          ]
+        },
+        {
+          "label": "General notes in the set",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "GEN-NOTES"
+            ],
+            "scope": "set"
+          }
+        },
+        {
+          "label": "Boundary note on the site plan",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "BOUNDARY"
+            ],
+            "scope": "every_sheet"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "No placeholder or draft text",
+          "check_type": "forbidden_text",
+          "severity": "major",
+          "params": {
+            "phrases": [
+              "TO BE UPDATED",
+              "XXXX",
+              "TBC",
+              "TBA"
+            ]
+          }
+        },
+        {
+          "label": "Spelling",
+          "check_type": "spelling",
+          "severity": "minor",
+          "params": {}
+        }
+      ]
+    }
+  ]
 }

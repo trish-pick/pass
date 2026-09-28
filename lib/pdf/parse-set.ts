@@ -59,6 +59,7 @@ export function parseSet(pages: ExtractedPage[], profile: PracticeProfile): Pars
       sheetTitle,
       sheetType: sheetTypeFor(sheetTitle, profile),
       titleBlock,
+      titleBlockBoxes: Object.fromEntries(Object.entries(tb).map(([k, v]) => [k, v.bbox])),
       textBlocks: page.lines,
       imagePath: page.imagePath ?? null,
     };
