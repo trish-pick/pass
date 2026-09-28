@@ -111,6 +111,12 @@ export type Check<P = Record<string, unknown>> = {
   label: string;
   description?: string;
   source: FindingSource;
+  /**
+   * "automatic" (default) checks run in the audit. "reviewer" items are not run:
+   * they are listed on the correction list for the reviewer to tick off by eye,
+   * e.g. judgement calls, or visual checks until the Phase 2 AI checks arrive.
+   */
+  mode?: "automatic" | "reviewer";
   /** Settings shown in the checklist item editor. */
   params?: ParamField[];
   run: (ctx: CheckContext, params: P) => Promise<FindingInput[]>;

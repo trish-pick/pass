@@ -63,6 +63,7 @@ describe("seeded set acceptance", () => {
     has("standard_note_present", SEEDED_ERRORS.missingNoteSheet, "DISCLAIMER");
     has("forbidden_text", "B04", SEEDED_ERRORS.draftText);
     has("spelling", "B02", SEEDED_ERRORS.misspelling);
+    has("cover_sheet_consistent", "B01", SEEDED_ERRORS.coverCouncil);
   });
 
   it.todo("catches the missing north point on B02 (Phase 2 AI check visual_element_present)");

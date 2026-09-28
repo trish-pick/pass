@@ -36,6 +36,12 @@ describe("correction list", () => {
       finding({ sheetId: b.id, message: "ai item", source: "ai" }),
     ],
     itemLabels: new Map([["i1", "Item one"]]),
+    reviewerItems: [
+      { label: "Cross-check the planning permit", appliesTo: null },
+      { label: "North point shown", appliesTo: ["site_plan"], aiLater: true },
+      { label: "Boundary tags checked", appliesTo: ["site_plan"] },
+      { label: "Scale note", appliesTo: ["!cover"] },
+    ],
   });
 
   it("groups by sheet in page order, whole set first, most severe first, leaving out dismissed items", () => {
@@ -46,6 +52,16 @@ describe("correction list", () => {
     ]);
     expect(list.counts).toEqual({ critical: 1, major: 1, minor: 2 });
     expect(list.total).toBe(4);
+  });
+
+  it("groups reviewer checks by sheet type", () => {
+    expect(list.reviewerTotal).toBe(4);
+    expect(list.reviewerGroups.map((g) => [g.heading, g.items.length])).toEqual([
+      ["Whole set", 1],
+      ["Site plan", 2],
+      ["Every sheet except the cover", 1],
+    ]);
+    expect(correctionListCsv(list)).toContain("Site plan,,reviewer check,North point shown,,,Reviewer (AI from Phase 2)");
   });
 
   it("describes locations in plain terms", () => {

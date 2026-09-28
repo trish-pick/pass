@@ -51,7 +51,7 @@ export const check: Check = {
       } else if (missing.length > 0) {
         findings.push({
           sheetId: sheet.id,
-          message: `Title block is missing: ${missing.join(", ")}.`,
+          message: `${sheet.sheetType === "cover" ? "Cover page" : "Title block"} is missing: ${missing.join(", ")}.`,
           bbox: null,
         });
       }

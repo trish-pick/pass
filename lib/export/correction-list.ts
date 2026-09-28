@@ -13,6 +13,10 @@ export type CorrectionRow = {
 
 export type CorrectionGroup = { heading: string; rows: CorrectionRow[] };
 
+/** A checklist item the reviewer ticks off by eye (see Check.mode). */
+export type ReviewerItem = { label: string; appliesTo: string[] | null; note?: string; aiLater?: boolean };
+export type ReviewerGroup = { heading: string; items: ReviewerItem[] };
+
 export type CorrectionList = {
   projectName: string;
   projectNumber: string | null;
@@ -23,6 +27,8 @@ export type CorrectionList = {
   counts: Record<Severity, number>;
   total: number;
   groups: CorrectionGroup[];
+  reviewerGroups: ReviewerGroup[];
+  reviewerTotal: number;
 };
 
 const SEVERITY_ORDER: Record<Severity, number> = { critical: 0, major: 1, minor: 2 };
@@ -37,6 +43,7 @@ export function buildCorrectionList(input: {
   sheets: ParsedSheet[];
   findings: (EngineFinding & { status?: "open" | "resolved" | "dismissed" })[];
   itemLabels: Map<string, string>;
+  reviewerItems?: ReviewerItem[];
 }): CorrectionList {
   const open = input.findings.filter((f) => (f.status ?? "open") === "open");
   const sheetById = new Map(input.sheets.map((s) => [s.id, s]));
@@ -87,7 +94,31 @@ export function buildCorrectionList(input: {
     counts,
     total: open.length,
     groups,
+    reviewerGroups: groupReviewerItems(input.reviewerItems ?? []),
+    reviewerTotal: input.reviewerItems?.length ?? 0,
   };
+}
+
+/** Groups reviewer items by the sheet types they apply to, in first-seen order. */
+function groupReviewerItems(items: ReviewerItem[]): ReviewerGroup[] {
+  const groups = new Map<string, ReviewerItem[]>();
+  for (const item of items) {
+    const heading = sheetTypeHeading(item.appliesTo);
+    groups.set(heading, [...(groups.get(heading) ?? []), item]);
+  }
+  return [...groups.entries()].map(([heading, list]) => ({ heading, items: list }));
+}
+
+/** "site_plan" -> "Site plan"; ["!cover"] -> "Every sheet except the cover". */
+export function sheetTypeHeading(appliesTo: string[] | null): string {
+  if (!appliesTo || appliesTo.length === 0) return "Whole set";
+  const human = (t: string) => t.replace(/_/g, " ");
+  const include = appliesTo.filter((t) => !t.startsWith("!")).map(human);
+  const exclude = appliesTo.filter((t) => t.startsWith("!")).map((t) => human(t.slice(1)));
+  const text = include.length
+    ? include.join(", ")
+    : `Every sheet except the ${exclude.join(", ")}`;
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 /** A plain description of where on the sheet a finding is, for the drafter. */
@@ -119,6 +150,9 @@ export function correctionListCsv(list: CorrectionList): string {
       r.source === "ai" ? "AI (please verify)" : "Rule",
     ]),
   );
+  const reviewer = list.reviewerGroups.flatMap((g) =>
+    g.items.map((i) => [g.heading, "", "reviewer check", i.note ? `${i.label} (${i.note})` : i.label, "", "", i.aiLater ? "Reviewer (AI from Phase 2)" : "Reviewer"]),
+  );
   const escape = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
-  return [header, ...rows].map((r) => r.map(escape).join(",")).join("\r\n") + "\r\n";
+  return [header, ...rows, ...reviewer].map((r) => r.map(escape).join(",")).join("\r\n") + "\r\n";
 }

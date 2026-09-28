@@ -12,7 +12,7 @@ import { parseArgs } from "node:util";
 
 import { fromSeed, type PracticeSeed } from "@/lib/audit/local";
 import { copy } from "@/lib/copy";
-import { runChecklist } from "@/lib/checks/engine";
+import { appliesTo, runChecklist } from "@/lib/checks/engine";
 import { getCheck } from "@/lib/checks/index";
 import { buildCorrectionList, correctionListCsv } from "@/lib/export/correction-list";
 import { correctionListPdf } from "@/lib/export/correction-list-pdf";
@@ -65,6 +65,12 @@ const started = Date.now();
 const { findings, errors } = await runChecklist(ctx, items, getCheck);
 for (const e of errors) console.error(`Check ${e.checkType} could not run: ${e.error}`);
 
+// Reviewer items (judgement calls, and visual checks until Phase 2) for the sheet types in this set.
+const reviewerItems = items
+  .filter((i) => getCheck(i.checkType)?.mode === "reviewer")
+  .filter((i) => !i.appliesTo?.length || sheets.some((s) => appliesTo(s.sheetType, i.appliesTo)))
+  .map((i) => ({ label: i.label, appliesTo: i.appliesTo, aiLater: getCheck(i.checkType)?.source === "ai" }));
+
 const list = buildCorrectionList({
   projectName: project.name,
   projectNumber: project.projectNumber,
@@ -75,6 +81,7 @@ const list = buildCorrectionList({
   sheets,
   findings,
   itemLabels: new Map(items.map((i) => [i.id, i.label])),
+  reviewerItems,
 });
 
 fs.mkdirSync(values.out!, { recursive: true });
@@ -87,4 +94,5 @@ for (const group of list.groups) {
   console.log(`\n${group.heading}`);
   for (const row of group.rows) console.log(`  [${row.severity}] ${row.message}  (${row.location})`);
 }
+console.log(`\n${reviewerItems.length} reviewer checks listed for ticking off by eye.`);
 console.log(`\nWrote ${base}.csv and ${base}.pdf`);

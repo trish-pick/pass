@@ -180,8 +180,15 @@ describe("standard_note_present", () => {
 describe("required_text_present", () => {
   it("checks each applicable sheet, or the set", async () => {
     const sheets = [sheet({ number: "A02", text: ["BAL-12.5"] }), sheet({ number: "A03", text: ["Floor"] })];
-    expect(await messages(requiredTextPresent, sheets, { text: "BAL" })).toEqual(['"BAL" is missing from A03.']);
+    expect(await messages(requiredTextPresent, sheets, { text: "BAL" })).toEqual(['Not found on A03: "BAL".']);
     expect(await messages(requiredTextPresent, sheets, { text: "BAL", scope: "set" })).toEqual([]);
+  });
+
+  it("matches patterns, described in plain words", async () => {
+    const sheets = [sheet({ number: "A02", text: ["Roof pitch 22.5°"] }), sheet({ number: "A03", text: ["Roof pitch TBC"] })];
+    expect(await messages(requiredTextPresent, sheets, { pattern: "\\d+(\\.\\d+)?\\s?°", describe: "A roof pitch in degrees" })).toEqual([
+      "Not found on A03: a roof pitch in degrees.",
+    ]);
   });
 });
 
@@ -207,5 +214,48 @@ describe("spelling", () => {
       [null, expect.stringMatching(/^"furter" may be misspelt\..*appears on 3 sheets \(A01, A02, A03\)/)],
       [sheets[1].id, expect.stringContaining('"accoustic" may be misspelt')],
     ]);
+  });
+});
+
+describe("cover_sheet_consistent", () => {
+  it("compares the cover with the sheets, the set revision and the project", async () => {
+    const cover = sheet({
+      number: "A01",
+      type: "cover",
+      titleBlock: { job_number: "X1", local_council: "Other Council" },
+      text: ["PROPOSED NEW RESIDENCE for J Sample at 1 Example Street", "Rev01", "Title 123/4"],
+    });
+    const sheets = [
+      cover,
+      sheet({ number: "A02", titleBlock: { job_number: "X1", local_council: "City Council", title_ref: "123/4", revision: "Rev01" } }),
+      sheet({ number: "A03", titleBlock: { job_number: "X1", local_council: "City Council", title_ref: "123/4", revision: "Rev01" } }),
+    ];
+    const out = await messages(
+      (await import("./cover-sheet-consistent")).check,
+      sheets,
+      {},
+      { project: { name: "P", projectNumber: "X1", address: "2 Other Road" } },
+    );
+    expect(out).toEqual([
+      'Local council on the cover is "Other Council" but should be "City Council".',
+      'The cover doesn\'t show the project address "2 Other Road".',
+    ]);
+  });
+});
+
+describe("reviewer items", () => {
+  it("are not run by the engine", async () => {
+    const { runChecklist } = await import("./engine");
+    const { getCheck } = await import("./index");
+    const { findings, errors } = await runChecklist(
+      context([sheet({ number: "A02" })]),
+      [
+        { id: "r1", checkType: "manual_review", params: {}, severity: "minor", appliesTo: null },
+        { id: "r2", checkType: "visual_element_present", params: { element: "North point" }, severity: "minor", appliesTo: null },
+      ],
+      getCheck,
+    );
+    expect(findings).toEqual([]);
+    expect(errors).toEqual([]);
   });
 });

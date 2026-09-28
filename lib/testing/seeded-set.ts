@@ -24,6 +24,7 @@ export const SEEDED_ERRORS = {
   misspelling: "landscapping", // on B02
   missingNoteSheet: "B-06", // no disclaimer
   missingNorthPoint: "B02", // Phase 2 (AI) check
+  coverCouncil: "Meander Valley Council", // on the cover, sheets say Launceston
 };
 
 type Sheet = { number: string; title: string; body: string[]; overrides?: Partial<Record<string, string>>; noDisclaimer?: boolean; northPoint?: boolean };
@@ -54,26 +55,42 @@ function sheets(errors: boolean): Sheet[] {
     {
       number: "B02",
       title: "Site Plan",
-      body: [...BOUNDARY, errors ? "Retain all rocks on-site for landscapping." : "Retain all rocks on-site for landscaping.", "1 : 200"],
+      body: [
+        ...BOUNDARY,
+        errors ? "Retain all rocks on-site for landscapping." : "Retain all rocks on-site for landscaping.",
+        "Proposed New Residence FFL 12.50",
+        "Contour interval 0.500m",
+        "Concrete driveway, new crossover",
+        "Connect to existing sewer and stormwater",
+        "Boundary 32.15 m",
+        "1 : 200",
+      ],
       northPoint: !errors,
     },
     {
       number: "B03",
       title: "Floor Plan",
-      body: ["Kitchen", "Living", "Bed 1", errors ? "Refer to B12 for window details." : "Refer to B04 for window details.", "1 : 100"],
+      body: [
+        "Kitchen",
+        "Living",
+        "Bed 1",
+        "Legend: csd Cavity sliding door, s/d Sliding door",
+        errors ? "Refer to B12 for window details." : "Refer to B04 for window details.",
+        "1 : 100",
+      ],
       overrides: errors ? { job: SEEDED_ERRORS.wrongJobNumber } : {},
     },
     {
       number: "B04",
       title: "Elevations",
-      body: ["Northern Elevation", "Colorbond roof cladding", ...(errors ? ["TO BE UPDATED"] : []), "1 : 100"],
+      body: ["Northern Elevation", "Colorbond roof cladding", "Floor Plan 10000", ...(errors ? ["TO BE UPDATED"] : []), "1 : 100"],
       overrides: errors ? { revision: SEEDED_ERRORS.wrongRevision } : {},
     },
-    { number: errors ? SEEDED_ERRORS.wrongSheetNumber : "B05", title: "Sections", body: ["Section A", "1 : 50"] },
+    { number: errors ? SEEDED_ERRORS.wrongSheetNumber : "B05", title: "Sections", body: ["Section A", "Roof pitch 22.5°", "R5.0 ceiling insulation batts", "Refer to engineer's drawings", "1 : 50"] },
     {
       number: errors ? SEEDED_ERRORS.badFormat : "B06",
       title: "Roof Plan",
-      body: ["Roof Plan", "Box gutter", "1 : 100"],
+      body: ["Roof Plan", "Box gutter", "d.p. downpipe", "Eaves 450", "Roof pitch 22.5°", "1 : 100"],
       overrides: errors ? { drawnBy: SEEDED_ERRORS.placeholder } : {},
       noDisclaimer: errors,
     },
@@ -103,7 +120,24 @@ export async function seededSet({ errors }: { errors: boolean }): Promise<Uint8A
         put(page, l.title, 1011, 195 + i * 11, 8);
       });
       GENERAL_NOTES.forEach((t, i) => put(page, t, 60, 120 + i * 10, 7, i === 0 ? bold : font));
-      put(page, `JOB No: ${SEEDED.jobNumber}`, 963, 520, 9);
+      put(page, "PROPOSED NEW RESIDENCE", 98, 300, 24, bold);
+      put(page, `for ${SEEDED.project[0]} at ${SEEDED.address}, Launceston`, 98, 330, 14);
+      put(page, "Title 123456/1", 98, 350, 14);
+      const cover: [string, string, number, number][] = [
+        ["LOCAL COUNCIL:", errors ? SEEDED_ERRORS.coverCouncil : "Launceston City Council", 101, 724],
+        ["DESIGNED BY:", "Sample Designer", 101, 742],
+        ["REVISION NO.", SEEDED.revision, 101, 776],
+        ["JOB No:", SEEDED.jobNumber, 101, 792],
+        ["BUSHFIRE ATTACK LEVEL (BAL):", "BAL-12.5", 446, 724],
+        ["SOIL CLASSIFICATION:", "Class M", 446, 742],
+        ["WIND CLASSIFICATION:", "N2", 446, 758],
+        ["ENERGY RATING:", "7*", 446, 776],
+        ["CLIMATE ZONE:", "7", 446, 793],
+      ];
+      for (const [label, value, x, top] of cover) {
+        put(page, label, x, top, 7);
+        put(page, value, x + 122, top - 3, 11);
+      }
       return;
     }
 

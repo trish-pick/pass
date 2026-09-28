@@ -48,3 +48,10 @@ describe("readTitleBlock", () => {
     expect(v.project).toBeUndefined();
   });
 });
+
+describe("readTitleBlock on a cover layout", () => {
+  it("falls back to the other direction when a label is laid out differently", () => {
+    const v = values([line("REVISION NO.", 101, 778), line("Rev03", 157, 774, 16), line("JOB No:", 217, 783), line("FS25008", 247, 774, 16)]);
+    expect(v).toMatchObject({ revision: "Rev03", job_number: "FS25008" });
+  });
+});

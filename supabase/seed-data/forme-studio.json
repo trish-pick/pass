@@ -66,6 +66,42 @@
         "label": "TITLE:",
         "required": true,
         "direction": "below"
+      },
+      {
+        "key": "bal",
+        "label": "BUSHFIRE ATTACK LEVEL (BAL):",
+        "required": false,
+        "direction": "right"
+      },
+      {
+        "key": "soil",
+        "label": "SOIL CLASSIFICATION:",
+        "required": false,
+        "direction": "right"
+      },
+      {
+        "key": "wind",
+        "label": "WIND CLASSIFICATION:",
+        "required": false,
+        "direction": "right"
+      },
+      {
+        "key": "climate_zone",
+        "label": "CLIMATE ZONE:",
+        "required": false,
+        "direction": "right"
+      },
+      {
+        "key": "energy_rating",
+        "label": "ENERGY RATING:",
+        "required": false,
+        "direction": "right"
+      },
+      {
+        "key": "cover_accreditation",
+        "label": "ACCRED. :",
+        "required": false,
+        "direction": "right"
       }
     ],
     "conventions": {
@@ -79,10 +115,12 @@
         "cover": [
           "cover"
         ],
+        "energy": [
+          "energy efficiency"
+        ],
         "notes": [
           "notes",
           "table",
-          "energy efficiency",
           "glazing",
           "livable",
           "healthy home"
@@ -96,9 +134,15 @@
         "framing": [
           "framing"
         ],
+        "setout": [
+          "setout",
+          "set out"
+        ],
+        "dimension_plan": [
+          "dimension"
+        ],
         "floor_plan": [
-          "floor plan",
-          "dimension plan"
+          "floor plan"
         ],
         "elevation": [
           "elevation"
@@ -109,17 +153,19 @@
         "roof": [
           "roof plan"
         ],
-        "slab": [
-          "slab"
-        ],
         "schedule": [
           "schedule"
         ],
-        "services": [
-          "plumbing",
+        "ceiling": [
+          "reflected ceiling"
+        ],
+        "electrical": [
           "electrical",
-          "reflected ceiling",
           "lighting"
+        ],
+        "plumbing": [
+          "plumbing",
+          "drainage"
         ],
         "finishes": [
           "finishes"
@@ -221,10 +267,12 @@
       "name": "Concept pre-issue checklist",
       "items": [
         {
-          "label": "Sheet numbers follow the numbering pattern",
+          "label": "Sheet numbers use the A prefix",
           "check_type": "sheet_number_format",
           "severity": "major",
-          "params": {}
+          "params": {
+            "pattern": "A\\d{2,3}[a-z]?"
+          }
         },
         {
           "label": "No duplicate, missing or out-of-order sheets",
@@ -273,10 +321,12 @@
       "name": "Planning pre-issue checklist",
       "items": [
         {
-          "label": "Sheet numbers follow the numbering pattern",
+          "label": "Sheet numbers use the A prefix",
           "check_type": "sheet_number_format",
           "severity": "major",
-          "params": {}
+          "params": {
+            "pattern": "A\\d{2,3}[a-z]?"
+          }
         },
         {
           "label": "No duplicate, missing or out-of-order sheets",
@@ -379,13 +429,15 @@
     },
     {
       "stage": "Building Documentation",
-      "name": "Building Documentation pre-issue checklist",
+      "name": "Building Documentation final check",
       "items": [
         {
-          "label": "Sheet numbers follow the numbering pattern",
+          "label": "Sheet numbers use the B prefix for Building Documentation",
           "check_type": "sheet_number_format",
           "severity": "major",
-          "params": {}
+          "params": {
+            "pattern": "B\\d{2,3}[a-z]?"
+          }
         },
         {
           "label": "No duplicate, missing or out-of-order sheets",
@@ -394,13 +446,13 @@
           "params": {}
         },
         {
-          "label": "Drawing register matches the set",
+          "label": "Drawing register matches the set (numbers and page names)",
           "check_type": "sheet_index_match",
           "severity": "major",
           "params": {}
         },
         {
-          "label": "Title block complete on every sheet",
+          "label": "Title block complete on every sheet (drafting, designer, date etc.)",
           "check_type": "title_block_complete",
           "severity": "major",
           "params": {},
@@ -427,7 +479,7 @@
           ]
         },
         {
-          "label": "Sheet references point to sheets in the set",
+          "label": "Section marks and sheet references point to sheets in the set",
           "check_type": "callout_references",
           "severity": "major",
           "params": {
@@ -464,18 +516,28 @@
           }
         },
         {
-          "label": "Boundary note on the site plan",
-          "check_type": "standard_note_present",
+          "label": "Remove 'preliminary'",
+          "check_type": "forbidden_text",
           "severity": "major",
           "params": {
-            "codes": [
-              "BOUNDARY"
-            ],
-            "scope": "every_sheet"
-          },
-          "applies_to": [
-            "site_plan"
-          ]
+            "phrases": [
+              "preliminary",
+              "prelim"
+            ]
+          }
+        },
+        {
+          "label": "Remove planning notes",
+          "check_type": "forbidden_text",
+          "severity": "major",
+          "params": {
+            "phrases": [
+              "Site Coverage",
+              "Private Open Space",
+              "Building Envelopes",
+              "Planning Assessment"
+            ]
+          }
         },
         {
           "label": "No placeholder or draft text",
@@ -491,10 +553,1644 @@
           }
         },
         {
-          "label": "Spelling",
+          "label": "Spelling, including page names and room names",
           "check_type": "spelling",
           "severity": "minor",
           "params": {}
+        },
+        {
+          "label": "Cross-check any conditions on the planning permit are met within the documentation",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {}
+        },
+        {
+          "label": "Notes are correct and up to date, and waterproofing notes are relevant to this project",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {}
+        },
+        {
+          "label": "Cover matches the sheets (job number, council, title reference, revision) and the project address",
+          "check_type": "cover_sheet_consistent",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Site specifics on the cover (BAL, soil, wind, climate zone, energy rating)",
+          "check_type": "title_block_complete",
+          "severity": "major",
+          "params": {
+            "fields": [
+              "bal",
+              "soil",
+              "wind",
+              "climate_zone",
+              "energy_rating"
+            ]
+          },
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "Client name, project type (e.g. \"New Residence\") and project location correct on the cover",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "Project stage correct on the cover (concept, planning, building)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "Should this issue go to Rev A?",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "3D view on the cover page",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "3D view on the cover page"
+          },
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "TasWater: check locations of connections and sizes",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "cover"
+          ]
+        },
+        {
+          "label": "Boundary note on the site plan",
+          "check_type": "standard_note_present",
+          "severity": "major",
+          "params": {
+            "codes": [
+              "BOUNDARY"
+            ],
+            "scope": "every_sheet"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Boundary dimensions noted (XX.XXm)",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "\\d+\\.\\d{2,3}\\s?m\\b",
+            "describe": "Boundary dimensions noted (XX.XXm)"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Finished floor level (FFL) of the proposed residence noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "FFL",
+            "describe": "Finished floor level (FFL) of the proposed residence noted"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Contour lines noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "contour",
+            "describe": "Contour lines noted"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Driveway noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "driveway",
+            "describe": "Driveway noted"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Sewer and stormwater connections noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "(?=[\\s\\S]*sewer)(?=[\\s\\S]*stormwater)",
+            "describe": "Sewer and stormwater connections"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "North point shown and checked against the title",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "North point shown and checked against the title"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Boundary lines: Pen 5, short dash x 2, long dash x 1",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Boundary lines: Pen 5, short dash x 2, long dash x 1"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Ridge, gutter and fascia hidden",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Ridge, gutter and fascia hidden"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Plants hidden (if not relevant)",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Plants hidden (if not relevant)"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Roof 60% transparent, overridden with crosshatch surface pattern",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Roof 60% transparent, overridden with crosshatch surface pattern"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Contour lines shown with heights",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Contour lines shown with heights"
+          },
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Neighbouring addresses shown",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Site setbacks cross-checked with the planning permit (2 at each point, at 2 locations)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Boundary tags cross-checked with the title",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Crossover noted (where new or altered)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Car parking location noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Footpath, retaining walls, batters, cut/fill, steps and major trees noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Connections noted: sewer, stormwater, power, Telstra, gas, water",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Easements shown with measurements",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "TasWater and water meter info if strata titled",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "site_plan"
+          ]
+        },
+        {
+          "label": "Demolition note",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "demolition works",
+            "describe": "The demolition works note"
+          },
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Capping off of plumbing noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "cap(ped)?\\s*(off|all)",
+            "describe": "Capping off of plumbing"
+          },
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Walls and works to be demolished are hatched",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Walls and works to be demolished are hatched"
+          },
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Demolition noted where windows and doors are removed",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Items to be reused noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Items to be removed noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Areas needing support noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "demolition"
+          ]
+        },
+        {
+          "label": "Legend on the floor plan",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "legend",
+            "describe": "A legend"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Window and door tags shown",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Window and door tags shown"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Bulkheads, exposed beams/trusses, voids and raked ceilings (with angle) noted",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Bulkheads, exposed beams/trusses, voids and raked ceilings (with angle) noted"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Roof lines, ridge lines and eaves shown (Pen 1, dash)",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Roof lines, ridge lines and eaves shown (Pen 1, dash)"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Wall types legend",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Wall types legend"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Column legend (e.g. 89x3.5 SHS, 100x100 F17, 89x5.0 SHS, double stud 2/90x45 MGP12)",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Column legend (e.g. 89x3.5 SHS, 100x100 F17, 89x5.0 SHS, double stud 2/90x45 MGP12)"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "North point on the title block",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "North point on the title block"
+          },
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Figures don't overlap lines",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Figures don't overlap lines"
+          },
+          "applies_to": [
+            "floor_plan",
+            "dimension_plan"
+          ]
+        },
+        {
+          "label": "Window and door tag numbers match the schedule",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Cavity sliding and face sliding doors noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Legend items used: csd, sd, bal., up, col., ds, gss, gt, hr, fr, sink, dw, h/p, oven, cup'd, bench, b-bar, rangehood, robe, fall, bath, basin, shwr, w/c, t-rail, htr, tr, w/m, dry, window/bench seat, up at doors (add height if known)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Supports for floors, roofs etc. line up (columns or cantilever)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Bed positions work with windows",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Special wall heights noted (1200 etc.)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Retaining walls and batters shown",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Window light (10%) and ventilation (5%) to floor area",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Room names correct",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Skylights and solar tubes noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Load-bearing walls identified",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "FFL at each level",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Shower dimensions",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Deck, landing and entry finishes noted (e.g. concrete, decking)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Stair schedule (locations and requirements) and stair note",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "floor_plan"
+          ]
+        },
+        {
+          "label": "Dimensions to wall core (stud, block etc.), not lightweight cladding",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "dimension_plan"
+          ]
+        },
+        {
+          "label": "Wall thickness by type: brick 240 internal to external, lightweight 90 stud/standard only",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "dimension_plan"
+          ]
+        },
+        {
+          "label": "Wall dimensions cross-checked with the set-out plan (these should match)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "dimension_plan"
+          ]
+        },
+        {
+          "label": "Overall and extent dimensions, room names for clarity, good drafting practice",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "dimension_plan"
+          ]
+        },
+        {
+          "label": "Levels noted with names and heights (e.g. Floor Plan 10000)",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "(FFL|floor( plan)?|ground)\\s*\\d{4,5}",
+            "describe": "Levels with names and heights"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Cladding types noted (roof and wall)",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "cladding|weatherboard",
+            "describe": "Cladding types"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Opening directions shown on sliding doors",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Opening directions shown on sliding doors"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Windows tagged",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Windows tagged"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Gutters, fascias, ridge lines and flashings shown",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Gutters, fascias, ridge lines and flashings shown"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Cladding hatching correct",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Cladding hatching correct"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "View labels correct to north",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "View labels correct to north"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Contours and fall away from house shown on all sides",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Contours and fall away from house shown on all sides"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Shadows turned off",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Shadows turned off"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "North turned off on the title block",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "North turned off on the title block"
+          },
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "ESL and FSL noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Head heights checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Concrete footpaths and patios shown 100mm below FFL",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Driveway slope ratios checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Roof slope noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "elevation"
+          ]
+        },
+        {
+          "label": "Schedules include elevation images (external doors only)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "schedule"
+          ]
+        },
+        {
+          "label": "Sizes, sills and head heights cross-checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "schedule"
+          ]
+        },
+        {
+          "label": "Translucent windows, fixed and opening, noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "schedule"
+          ]
+        },
+        {
+          "label": "Descriptions, glass type, frame and comments, orientation and finish checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "schedule"
+          ]
+        },
+        {
+          "label": "Roof slope angle noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "\\d+(\\.\\d+)?\\s?\u00b0",
+            "describe": "A roof slope angle in degrees"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Downpipes (D.P.) noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "d\\.p\\.|downpipe",
+            "describe": "Downpipes (D.P.)"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Gutters noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "gutter",
+            "describe": "Gutters"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Eaves noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "eave",
+            "describe": "Eaves"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Gable ends, ridge, valley, hip, flashings, roof slope direction and spreaders shown",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Gable ends, ridge, valley, hip, flashings, roof slope direction and spreaders shown"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Eaves dimensions",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Eaves dimensions"
+          },
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "D.P. locations checked against window positions",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Spaces below noted (external only)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Cladding type cross-checked with manufacturer's minimum/maximum slope",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Box window seat slope to roof",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Gutter design, D.P. sizes and roof water volumes",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "roof"
+          ]
+        },
+        {
+          "label": "Insulation location noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "insulation|batts",
+            "describe": "Insulation"
+          },
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Reference to engineer's documents",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "engineer",
+            "describe": "A reference to the engineer's documents"
+          },
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Roof slopes noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "\\d+(\\.\\d+)?\\s?\u00b0",
+            "describe": "A roof slope in degrees"
+          },
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Structure is correct: checked against engineering",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Levels, ceiling heights and room names",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Retaining wall sections",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Slab type is correct",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Structure drafted: trusses, floor framing, slab structure, stud frames",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Not too many specifics that are covered by the engineering drawings (in case specs change)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Eaves/external linings, cladding, raked ceilings, door and window tags, concrete landings and paths noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Falls away from house shown",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Falls away from house shown"
+          },
+          "applies_to": [
+            "section"
+          ]
+        },
+        {
+          "label": "Reference to engineer's specifications",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "engineer",
+            "describe": "A reference to the engineer's specifications"
+          },
+          "applies_to": [
+            "framing"
+          ]
+        },
+        {
+          "label": "Tie-down types and weights checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "framing"
+          ]
+        },
+        {
+          "label": "Framing notes checked",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "framing"
+          ]
+        },
+        {
+          "label": "D.S. and columns noted and positions correct",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "framing"
+          ]
+        },
+        {
+          "label": "Roof lines visible, 1.0 dashed",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Roof lines visible, 1.0 dashed"
+          },
+          "applies_to": [
+            "framing"
+          ]
+        },
+        {
+          "label": "Floor finishes legend",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "legend",
+            "describe": "A legend"
+          },
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Hatch types: tiles crosshatch, timber (or look-alike) lines, carpet speckled (sand), concrete solid grey",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Hatch types: tiles crosshatch, timber (or look-alike) lines, carpet speckled (sand), concrete solid grey"
+          },
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Falls shown to external finishes and showers",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Falls shown to external finishes and showers"
+          },
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Finish types correct",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Finishes and room names noted, with voids and changes in height",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Legend shows only what is used",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "finishes"
+          ]
+        },
+        {
+          "label": "Reflected ceiling legend",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "legend",
+            "describe": "A legend"
+          },
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Plasterboard (PB) noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "\\bPB\\b|plasterboard",
+            "describe": "Plasterboard (PB)"
+          },
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Ceiling height noted for each room",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Ceiling height noted for each room"
+          },
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Finish noted for each ceiling",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Finish noted for each ceiling"
+          },
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Door swings hidden",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Door swings hidden"
+          },
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Legend covers PB, WPb, Hp, Lp, raked ceilings, exposed members/bulkheads, exhaust fans and manhole",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Reflected ceiling taken 1m down from ceiling height",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "ceiling"
+          ]
+        },
+        {
+          "label": "Lighting calculator",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "lighting calc",
+            "describe": "The lighting calculator"
+          },
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Ventilation calculator",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "ventilation",
+            "describe": "Ventilation calculations"
+          },
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Insulation noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "insulation",
+            "describe": "Insulation"
+          },
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Wet area rooms hatched correctly (check legend)",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Wet area rooms hatched correctly (check legend)"
+          },
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Legend shows floor, wall and ceiling elements",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Glazing calculator (if not done with an energy assessment)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "NCC Part 3 energy efficiency schedule (if not doing an energy report)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Bulkhead insulation noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Sections show ceiling and floor insulation",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "energy"
+          ]
+        },
+        {
+          "label": "Smoke alarms noted as interconnected",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "interconnect",
+            "describe": "Smoke alarms noted as interconnected"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Electrical legend",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "legend|general purpose outlet",
+            "describe": "An electrical legend"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Smoke detectors near bedrooms and on all levels",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Smoke detectors near bedrooms and on all levels"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Downlights at least 1m off walls",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Downlights at least 1m off walls"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "No pendant lights over baths",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "No pendant lights over baths"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Fans over showers; fan and light connected in internal bathrooms and toilets",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Fans over showers; fan and light connected in internal bathrooms and toilets"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Power points not behind doors and not clashing with windows",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Power points not behind doors and not clashing with windows"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Plumbing fixtures shown so electrical and water are separated",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Plumbing fixtures shown so electrical and water are separated"
+          },
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Light fixtures and power requirements shown; wires run to switches sensibly",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Appliances noted: D/W, H/P, oven, fridge, r/hood, cooker, wall oven, m/w, w/m, dry, dimmers, heat lights, u/cab lighting, TV, NBN, Wi-Fi, roller/panel door",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Abbreviations noted: OB, USB, WP, UB, and heights above floor level",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Legend cross-checked so nothing is missed",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "electrical"
+          ]
+        },
+        {
+          "label": "Overflow relief gully (ORG) noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "o\\.?r\\.?g\\.?|overflow relief",
+            "describe": "The overflow relief gully (ORG)"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Plumbing legend",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "legend",
+            "describe": "A plumbing legend"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Connections to TasWater or council noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "taswater|council|connect",
+            "describe": "Connections to TasWater or council"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Vent noted",
+          "check_type": "required_text_present",
+          "severity": "minor",
+          "params": {
+            "pattern": "\\bvent\\b",
+            "describe": "A vent"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Stormwater and sewer lines drawn differently",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Stormwater and sewer lines drawn differently"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "No 90 degree bends in pipes",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "No 90 degree bends in pipes"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Sewer lines within house extents, stormwater external to the building",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Sewer lines within house extents, stormwater external to the building"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Main switchboard (MSB) located so pipes don't clash",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Main switchboard (MSB) located so pipes don't clash"
+          },
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Common-sense pipe runs; vent at end of line (near bathroom)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Legend checked against plumbing fixtures",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Floor waste charged by trough",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "IO, stack, spreader, ORG, sink, dw, wm, dry noted",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "D.P. checked against windows",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "Gutter design, D.P. and roof water volumes",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "plumbing"
+          ]
+        },
+        {
+          "label": "All slab edges dimensioned (to external slab edge, not cladding)",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "All slab edges dimensioned (to external slab edge, not cladding)"
+          },
+          "applies_to": [
+            "setout"
+          ]
+        },
+        {
+          "label": "Shower rebates, changes in height, diagonal dimensions, overall and dashed extent lines",
+          "check_type": "visual_element_present",
+          "severity": "minor",
+          "params": {
+            "element": "Shower rebates, changes in height, diagonal dimensions, overall and dashed extent lines"
+          },
+          "applies_to": [
+            "setout"
+          ]
+        },
+        {
+          "label": "Drains cross-checked with the floor plan",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {},
+          "applies_to": [
+            "setout"
+          ]
         }
       ]
     }

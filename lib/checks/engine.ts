@@ -37,7 +37,9 @@ export async function runChecklist(
 
   for (const [index, item] of items.entries()) {
     const check = lookup(item.checkType);
-    if (!check) {
+    if (check?.mode === "reviewer") {
+      // Listed for the reviewer on the correction list, not run.
+    } else if (!check) {
       errors.push({ checklistItemId: item.id, checkType: item.checkType, error: "Unknown check type" });
     } else {
       const sheets = ctx.sheets.filter((s) => appliesTo(s.sheetType, item.appliesTo));

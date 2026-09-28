@@ -93,6 +93,11 @@ export async function correctionListPdf(list: CorrectionList): Promise<Uint8Arra
     }
     y -= 20;
   }
+  if (list.reviewerTotal > 0) {
+    y -= 6;
+    text(cover, `Plus ${list.reviewerTotal} reviewer check${list.reviewerTotal === 1 ? "" : "s"} to tick off by eye`, MARGIN, y, 11, regular, MUTED);
+    y -= 20;
+  }
 
   // Disclaimer at the foot of the cover
   const disclaimer = wrap(copy.disclaimer, regular, 9, width - 24);
@@ -134,6 +139,40 @@ export async function correctionListPdf(list: CorrectionList): Promise<Uint8Arra
       y -= message.length * 13;
       text(page, detail.replace("·", "-"), MARGIN + 70, y, 8, regular, MUTED);
       y -= 18;
+    }
+  }
+
+  // Reviewer checks: a tick list, grouped by sheet type
+  if (list.reviewerGroups.length > 0) {
+    page = doc.addPage(A4);
+    y = A4[1] - MARGIN;
+    text(page, "Reviewer checks", MARGIN, y, 16, bold);
+    y -= 18;
+    for (const line of wrap(
+      "PASS doesn't check these automatically. Tick each one off by eye before the set issues. Items marked AI will be checked automatically once the Phase 2 AI checks are added.",
+      regular,
+      9,
+      width,
+    )) {
+      text(page, line, MARGIN, y, 9, regular, MUTED);
+      y -= 12;
+    }
+    y -= 6;
+    for (const group of list.reviewerGroups) {
+      ensure(40);
+      y -= 6;
+      text(page, group.heading, MARGIN, y, 11, bold);
+      y -= 7;
+      page.drawLine({ start: { x: MARGIN, y }, end: { x: MARGIN + width, y }, thickness: 0.8, color: RULE });
+      y -= 14;
+      for (const item of group.items) {
+        const lines = wrap(item.note ? `${item.label} (${item.note})` : item.label, regular, 9.5, width - 70);
+        ensure(lines.length * 12 + 6);
+        page.drawRectangle({ x: MARGIN, y: y - 1, width: 8, height: 8, borderColor: MUTED, borderWidth: 0.8 });
+        lines.forEach((l, i) => text(page, l, MARGIN + 16, y - i * 12, 9.5));
+        if (item.aiLater) text(page, "AI", MARGIN + width - 12, y, 7, bold, MUTED);
+        y -= lines.length * 12 + 5;
+      }
     }
   }
 

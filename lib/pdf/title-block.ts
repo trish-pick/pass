@@ -58,8 +58,23 @@ function findValue(
   // "PROJECT DETAILS:" is a different label, not a value.
   if (inline && !inline.endsWith(":")) return { value: inline, bbox: label.bbox, labelBBox: label.bbox };
 
-  const lb = label.bbox;
+  // Try the field's usual direction first, then the other: a cover sheet often
+  // lays the same label out differently from the sheets' title blocks.
   const direction = field.direction ?? "below";
+  return (
+    findInDirection(label, field, lines, isLabel, direction) ??
+    findInDirection(label, field, lines, isLabel, direction === "below" ? "right" : "below")
+  );
+}
+
+function findInDirection(
+  label: TextBlock,
+  field: TitleBlockField,
+  lines: TextBlock[],
+  isLabel: (l: TextBlock) => boolean,
+  direction: "below" | "right",
+): TitleBlockValue | null {
+  const lb = label.bbox;
   const candidates = lines.filter((l) => l !== label && !isLabel(l) && l.text.trim() !== "");
 
   if (direction === "right") {
