@@ -7,8 +7,8 @@ const ctx: CheckContext = {
   project: { name: "Test", projectNumber: "001", address: null },
   drawingSet: { revision: "A", stageId: "s1", stageName: "Concept" },
   sheets: [
-    { id: "p1", pageIndex: 0, sheetNumber: "A001", sheetTitle: "Site plan", sheetType: "plan", titleBlock: {}, textBlocks: [], imagePath: null },
-    { id: "p2", pageIndex: 1, sheetNumber: "A201", sheetTitle: "Elevations", sheetType: "elevation", titleBlock: {}, textBlocks: [], imagePath: null },
+    { id: "p1", pageIndex: 0, width: 1190, height: 842, sheetNumber: "A001", sheetTitle: "Site plan", sheetType: "plan", titleBlock: {}, textBlocks: [], imagePath: null },
+    { id: "p2", pageIndex: 1, width: 1190, height: 842, sheetNumber: "A201", sheetTitle: "Elevations", sheetType: "elevation", titleBlock: {}, textBlocks: [], imagePath: null },
   ],
   profile: { sheetNumberPattern: null, titleBlockFields: [], conventions: {} },
   standardNotes: [],

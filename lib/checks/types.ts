@@ -13,14 +13,20 @@ export type FindingSource = "rule" | "ai";
 /** PDF user-space rectangle on a sheet, in points, origin top-left. */
 export type BBox = { x: number; y: number; width: number; height: number };
 
+/** One line of text on a sheet, as extracted from the PDF text layer. */
 export type TextBlock = {
   text: string;
   bbox: BBox;
+  /** Font size in points, where known. */
+  size?: number;
 };
 
 export type ParsedSheet = {
   id: string;
   pageIndex: number;
+  /** Page size in points. */
+  width: number;
+  height: number;
   sheetNumber: string | null;
   sheetTitle: string | null;
   sheetType: string | null;
@@ -30,18 +36,36 @@ export type ParsedSheet = {
   imagePath: string | null;
 };
 
+/**
+ * A title block field, found by its printed label. The value is the nearest
+ * text in the given direction from the label, so the same definition works
+ * across title block layouts.
+ */
 export type TitleBlockField = {
+  /** Stable key, e.g. "sheet_number", "revision", "job_number". */
   key: string;
+  /** The label as printed, e.g. "DRAWING NO.". Matched ignoring case, spaces and trailing colons. */
   label: string;
   required: boolean;
-  /** Expected region on the sheet, as fractions of page width and height. */
-  region?: BBox;
+  /** Where the value sits relative to the label. Defaults to "below". */
+  direction?: "below" | "right";
+  /** Lines to read for multi-line values such as the project name and address. Defaults to 1. */
+  maxLines?: number;
+};
+
+export type PracticeConventions = {
+  /** Headings that introduce the drawing register, e.g. "Building Drawings". */
+  registerHeadings?: string[];
+  /** Sheet type keywords: a sheet whose title contains a keyword gets that type. */
+  sheetTypes?: Record<string, string[]>;
+  /** Text left in by templates that means a field was never filled in, e.g. "Author". */
+  placeholders?: string[];
 };
 
 export type PracticeProfile = {
   sheetNumberPattern: string | null;
   titleBlockFields: TitleBlockField[];
-  conventions: Record<string, unknown>;
+  conventions: PracticeConventions;
 };
 
 export type StandardNote = {

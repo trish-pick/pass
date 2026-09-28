@@ -1,0 +1,149 @@
+{
+  "organisation": {
+    "name": "Forme Studio Tasmania",
+    "slug": "forme-studio"
+  },
+  "profile": {
+    "sheetNumberPattern": "[A-Z]\\d{2,3}[a-z]?",
+    "titleBlockFields": [
+      {
+        "key": "sheet_number",
+        "label": "DRAWING NO.",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "revision",
+        "label": "REVISION NO.",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "job_number",
+        "label": "JOB No:",
+        "required": true,
+        "direction": "right"
+      },
+      {
+        "key": "project",
+        "label": "PROJECT:",
+        "required": true,
+        "direction": "below",
+        "maxLines": 4
+      },
+      {
+        "key": "local_council",
+        "label": "LOCAL COUNCIL:",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "accreditation",
+        "label": "ACCREDITATION :",
+        "required": true,
+        "direction": "right"
+      },
+      {
+        "key": "designed_by",
+        "label": "DESIGNED BY:",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "drawn_by",
+        "label": "DRAWN BY:",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "date",
+        "label": "DATE:",
+        "required": true,
+        "direction": "below"
+      },
+      {
+        "key": "title_ref",
+        "label": "TITLE:",
+        "required": true,
+        "direction": "below"
+      }
+    ],
+    "conventions": {
+      "registerHeadings": [
+        "Building Drawings",
+        "Planning Drawings",
+        "Concept Drawings",
+        "Drawing Register"
+      ],
+      "sheetTypes": {
+        "cover": [
+          "cover"
+        ],
+        "notes": [
+          "notes",
+          "table",
+          "energy efficiency",
+          "glazing",
+          "livable",
+          "healthy home"
+        ],
+        "site_plan": [
+          "site plan"
+        ],
+        "demolition": [
+          "demolition"
+        ],
+        "framing": [
+          "framing"
+        ],
+        "floor_plan": [
+          "floor plan",
+          "dimension plan"
+        ],
+        "elevation": [
+          "elevation"
+        ],
+        "section": [
+          "section"
+        ],
+        "roof": [
+          "roof plan"
+        ],
+        "slab": [
+          "slab"
+        ],
+        "schedule": [
+          "schedule"
+        ],
+        "services": [
+          "plumbing",
+          "electrical",
+          "reflected ceiling",
+          "lighting"
+        ],
+        "finishes": [
+          "finishes"
+        ],
+        "joinery": [
+          "joinery"
+        ],
+        "outbuilding": [
+          "outbuilding",
+          "shed"
+        ],
+        "views": [
+          "3d view",
+          "mood board"
+        ]
+      },
+      "placeholders": [
+        "Author",
+        "Designer",
+        "TO BE UPDATED",
+        "XXXX",
+        "TBC",
+        "TBA"
+      ]
+    }
+  }
+}
