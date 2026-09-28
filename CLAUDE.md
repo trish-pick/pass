@@ -230,7 +230,11 @@ Keep the interface calm and uncluttered. Branding is driven by a theme file so t
 - **Next.js 16.** Read `AGENTS.md` below. `middleware.ts` is now `proxy.ts`; `cookies()` is async.
 - **Central wording:** `lib/copy.ts` holds the disclaimer and all product wording. **Theme:** `app/theme.css` holds the brand colours.
 - **Database:** migrations in `supabase/migrations/`, seed data in `supabase/seed.sql`. No practice-specific data in app code.
-- **Checks:** `lib/checks/types.ts` (interface), `lib/checks/index.ts` (registry).
-- **Tests:** `npm test` (Vitest).
+- **Checks:** `lib/checks/types.ts` (interface), `lib/checks/index.ts` (registry), `lib/checks/engine.ts` (runner). Checklist `applies_to` accepts exclusions such as `["!cover"]`. `forbidden_text` was added beyond the brief's list, for draft text like "TO BE UPDATED".
+- **PDF reading:** `lib/pdf/extract.ts` (MuPDF, server only), `lib/pdf/title-block.ts` (values found relative to their printed labels), `lib/pdf/register.ts` (drawing register table), `lib/pdf/parse-set.ts`.
+- **Exports:** `lib/export/correction-list.ts` (rows and CSV), `lib/export/correction-list-pdf.ts` (pdf-lib).
+- **Practice seed data:** `supabase/seed-data/forme-studio.json` holds the profile, standard notes, dictionary and checklists per stage. Until the database exists, `npm run audit -- <set.pdf> --stage ... --revision ...` runs a full audit from it.
+- **Tests:** `npm test` (Vitest). `lib/testing/seeded-set.test.ts` is the acceptance test. Regenerate the seeded sets with `npm run seeded-set`.
+- **Scripts** run with `tsx`. The package is `"type": "module"`, since MuPDF uses top-level await.
 
 @AGENTS.md
