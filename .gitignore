@@ -44,3 +44,6 @@ next-env.d.ts
 # drawing sets may contain client data; keep only the README
 /test-sets/*
 !/test-sets/README.md
+# the seeded sets are generated and fictional, so they can be shared
+!/test-sets/seeded-error-set.pdf
+!/test-sets/seeded-clean-set.pdf

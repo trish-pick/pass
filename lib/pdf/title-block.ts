@@ -74,7 +74,8 @@ function findValue(
   // Below: same column, starting just under the label.
   const column = candidates
     .filter((l) => Math.abs(l.bbox.x - lb.x) <= COLUMN_SLACK)
-    .filter((l) => l.bbox.y >= lb.y + lb.height - 2)
+    // Starts below the label's middle: large values can rise slightly into the label's line.
+    .filter((l) => l.bbox.y >= lb.y + lb.height * 0.5)
     .sort((a, b) => a.bbox.y - b.bbox.y);
 
   const first = column[0];

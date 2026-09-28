@@ -21,8 +21,11 @@ export const check: Check = {
     },
   ],
   run: async (ctx, params) => {
-    const fields = (stringListParam(params, "fields") ?? DEFAULT_FIELDS).filter((f) =>
-      ctx.profile.titleBlockFields.some((tf) => tf.key === f),
+    const fields = (stringListParam(params, "fields") ?? DEFAULT_FIELDS).filter(
+      (f) =>
+        ctx.profile.titleBlockFields.some((tf) => tf.key === f) &&
+        // With a set revision, revision_consistent reports mismatches against it instead.
+        !(f === "revision" && ctx.drawingSet.revision?.trim()),
     );
     const findings: FindingInput[] = [];
 
