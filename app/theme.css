@@ -1,0 +1,60 @@
+/*
+ * PASS theme. All brand colours live here so the product can be rebranded
+ * without touching components. Components only use the semantic tokens
+ * (bg-primary, text-muted-foreground, etc.) defined in globals.css.
+ */
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.99 0.003 95);
+  --foreground: oklch(0.22 0.01 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.01 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.01 250);
+
+  /* Brand: a calm slate-teal */
+  --primary: oklch(0.42 0.06 215);
+  --primary-foreground: oklch(0.98 0.005 215);
+
+  --secondary: oklch(0.95 0.008 215);
+  --secondary-foreground: oklch(0.28 0.03 215);
+  --muted: oklch(0.96 0.005 95);
+  --muted-foreground: oklch(0.5 0.01 250);
+  --accent: oklch(0.94 0.012 215);
+  --accent-foreground: oklch(0.28 0.03 215);
+  --destructive: oklch(0.55 0.19 27);
+  --border: oklch(0.9 0.006 95);
+  --input: oklch(0.88 0.006 95);
+  --ring: oklch(0.55 0.06 215);
+
+  /* Finding severities */
+  --severity-critical: oklch(0.55 0.19 27);
+  --severity-major: oklch(0.7 0.14 65);
+  --severity-minor: oklch(0.6 0.05 250);
+
+  --font-brand: var(--font-geist-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.18 0.01 250);
+    --foreground: oklch(0.95 0.005 95);
+    --card: oklch(0.22 0.01 250);
+    --card-foreground: oklch(0.95 0.005 95);
+    --popover: oklch(0.22 0.01 250);
+    --popover-foreground: oklch(0.95 0.005 95);
+    --primary: oklch(0.72 0.07 215);
+    --primary-foreground: oklch(0.18 0.02 215);
+    --secondary: oklch(0.27 0.015 215);
+    --secondary-foreground: oklch(0.92 0.01 215);
+    --muted: oklch(0.26 0.01 250);
+    --muted-foreground: oklch(0.7 0.01 250);
+    --accent: oklch(0.28 0.02 215);
+    --accent-foreground: oklch(0.92 0.01 215);
+    --destructive: oklch(0.65 0.18 27);
+    --border: oklch(0.3 0.01 250);
+    --input: oklch(0.33 0.01 250);
+    --ring: oklch(0.6 0.06 215);
+  }
+}
