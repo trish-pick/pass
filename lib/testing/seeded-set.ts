@@ -25,9 +25,18 @@ export const SEEDED_ERRORS = {
   missingNoteSheet: "B-06", // no disclaimer
   missingNorthPoint: "B02", // Phase 2 (AI) check
   coverCouncil: "Meander Valley Council", // on the cover, sheets say Launceston
+  untaggedWindow: "5", // floor plan tags (w5), which isn't scheduled; window 3 is then untagged
 };
 
-type Sheet = { number: string; title: string; body: string[]; overrides?: Partial<Record<string, string>>; noDisclaimer?: boolean; northPoint?: boolean };
+type Sheet = {
+  number: string;
+  title: string;
+  body: string[];
+  overrides?: Partial<Record<string, string>>;
+  noDisclaimer?: boolean;
+  northPoint?: boolean;
+  schedules?: boolean;
+};
 
 const W = 1190.52;
 const H = 841.92;
@@ -75,6 +84,11 @@ function sheets(errors: boolean): Sheet[] {
         "Living",
         "Bed 1",
         "Legend: csd Cavity sliding door, s/d Sliding door",
+        "(w1)",
+        "(w2)",
+        errors ? `(w${SEEDED_ERRORS.untaggedWindow})` : "(w3)",
+        "(D1)",
+        "(D2)",
         errors ? "Refer to B12 for window details." : "Refer to B04 for window details.",
         "1 : 100",
       ],
@@ -84,6 +98,7 @@ function sheets(errors: boolean): Sheet[] {
       number: "B04",
       title: "Elevations",
       body: ["Northern Elevation", "Colorbond roof cladding", "Floor Plan 10000", ...(errors ? ["TO BE UPDATED"] : []), "1 : 100"],
+      schedules: true,
       overrides: errors ? { revision: SEEDED_ERRORS.wrongRevision } : {},
     },
     { number: errors ? SEEDED_ERRORS.wrongSheetNumber : "B05", title: "Sections", body: ["Section A", "Roof pitch 22.5°", "R5.0 ceiling insulation batts", "Refer to engineer's drawings", "1 : 50"] },
@@ -144,6 +159,15 @@ export async function seededSet({ errors }: { errors: boolean }): Promise<Uint8A
     // Body text
     s.body.forEach((t, i) => put(page, t, 120, 120 + i * 14, 9));
     if (s.northPoint) put(page, "N", 814, 729, 20, bold);
+    if (s.schedules) {
+      const table = (heading: string, top: number, rows: [string, string, string][]) => {
+        put(page, heading, 520, top, 12, bold);
+        ["Mark", "Description", "Width"].forEach((h, i) => put(page, h, 500 + i * 90, top + 24, 8));
+        rows.forEach((r, j) => r.forEach((c, i) => put(page, c, 500 + i * 90, top + 40 + j * 11, 8)));
+      };
+      table("Window Schedule", 100, [["1", "Awning Window", "1810"], ["2", "Awning Window", "910"], ["3", "Fixed Window", "610"]]);
+      table("Door Schedule", 260, [["1", "Front Entry Door", "1200"], ["2", "Cavity Sliding Door", "820"]]);
+    }
 
     // Title block
     const o = s.overrides ?? {};

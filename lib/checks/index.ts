@@ -12,6 +12,7 @@ import { check as forbiddenText } from "./forbidden-text";
 import { check as manualReview } from "./manual-review";
 import { check as requiredTextPresent } from "./required-text-present";
 import { check as revisionConsistent } from "./revision-consistent";
+import { check as scheduleTagsMatch } from "./schedule-tags-match";
 import { check as sheetIndexMatch } from "./sheet-index-match";
 import { check as sheetNumberFormat } from "./sheet-number-format";
 import { check as sheetNumberSequence } from "./sheet-number-sequence";
@@ -31,6 +32,7 @@ const checks: Check[] = [
   coverSheetConsistent,
   revisionConsistent,
   calloutReferences,
+  scheduleTagsMatch,
   standardNotePresent,
   requiredTextPresent,
   forbiddenText,

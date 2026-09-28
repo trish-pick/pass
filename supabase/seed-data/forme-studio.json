@@ -490,6 +490,12 @@
           }
         },
         {
+          "label": "Window and door tags match the schedules (check numbers)",
+          "check_type": "schedule_tags_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
           "label": "Scale note and disclaimer on every sheet",
           "check_type": "standard_note_present",
           "severity": "major",
@@ -1020,15 +1026,6 @@
           "applies_to": [
             "floor_plan",
             "dimension_plan"
-          ]
-        },
-        {
-          "label": "Window and door tag numbers match the schedule",
-          "check_type": "manual_review",
-          "severity": "minor",
-          "params": {},
-          "applies_to": [
-            "floor_plan"
           ]
         },
         {

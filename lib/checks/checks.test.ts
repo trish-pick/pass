@@ -259,3 +259,30 @@ describe("reviewer items", () => {
     expect(errors).toEqual([]);
   });
 });
+
+describe("schedule_tags_match", () => {
+  it("matches tags to schedule marks, both ways, and reports duplicates and gaps", async () => {
+    const schedule = sheet({ number: "A05", type: "schedule" });
+    schedule.textBlocks = [
+      line("Window Schedule", 340, 73, 16),
+      line("Mark", 103, 96, 9),
+      ...["1", "2", "4", "4", "S1"].map((m, i) => line(m, 93, 115 + i * 11, 9)),
+      line("Door Schedule", 328, 300, 16),
+      line("Mark", 119, 325, 9),
+      ...["1", "2"].map((m, i) => line(m, 93, 345 + i * 11, 9)),
+    ];
+    const plan = sheet({ number: "A03", text: ["(w1)", "(w2)", "(w7)", "(wS1)", "(D1)", "(D2)", "(D2)"] });
+    const out = await messages((await import("./schedule-tags-match")).check, [plan, schedule]);
+    expect(out).toEqual([
+      "Window 4 appears twice in the window schedule.",
+      "Window tag (w7) isn't in the window schedule.",
+      "Window 4 is in the schedule but isn't tagged on any plan or elevation.",
+      "Window numbering skips 3 (goes from 2 to 4).",
+    ]);
+  });
+
+  it("flags tags when there is no schedule", async () => {
+    const out = await messages((await import("./schedule-tags-match")).check, [sheet({ number: "A03", text: ["(D4)"] })]);
+    expect(out).toEqual(["Door tags are shown (e.g. (D4) on A03) but no door schedule was found."]);
+  });
+});
