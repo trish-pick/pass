@@ -25,7 +25,7 @@ describe("viewToPdf", () => {
     const bytes = await doc.save();
 
     const m = mupdf.Document.openDocument(bytes, "application/pdf").loadPage(0);
-    const st = JSON.parse(m.toStructuredText().asJSON());
+    const st = JSON.parse(m.toStructuredText("preserve-whitespace").asJSON());
     const b = st.blocks[0].lines[0].bbox;
     const reloaded = (await PDFDocument.load(bytes)).getPage(0);
     const map = viewToPdf(reloaded);
@@ -83,7 +83,7 @@ describe("markupPdf", () => {
 
     // The job number finding on B03 is clouded where the job number is.
     const job = onSheets.find((r) => r.message.includes("TCP90001"))!;
-    const b03 = doc.loadPage(summaryPages + 2).toStructuredText().asText();
+    const b03 = doc.loadPage(summaryPages + 2).toStructuredText("preserve-whitespace").asText();
     expect(b03).toContain(`#${job.no} Major`);
   });
 });
