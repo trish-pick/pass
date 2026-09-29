@@ -1,4 +1,4 @@
-import { addressKey, practiceValues, valuesAgree } from "@/lib/consultants/compare";
+import { addressKey, normaliseAddress, practiceValues, valuesAgree } from "@/lib/consultants/compare";
 import type { Discipline } from "@/lib/consultants/types";
 
 import { possessive } from "./consultant-based-on-current";
@@ -20,6 +20,7 @@ const DEFAULT_PAIRS: Record<Discipline, Pair[]> = {
   ],
   energy: [{ consultant: "star_rating", ours: "energy_rating", label: "Energy rating" }],
   bushfire: [{ consultant: "bal", ours: "bal", label: "BAL" }],
+  planning: [],
   other: [],
 };
 
@@ -39,6 +40,7 @@ export const check: Check = {
         { value: "energy", label: "Energy" },
         { value: "bushfire", label: "Bushfire" },
         { value: "geotech", label: "Geotechnical" },
+        { value: "planning", label: "Planning permit" },
       ],
     },
   ],
@@ -76,6 +78,27 @@ export const check: Check = {
         }
       }
 
+      // Titles: every certificate of title the document covers appears on the drawings.
+      if (doc.fields.titles) {
+        const ourText = [
+          ours.coverText,
+          ...ctx.sheets.map((s) => s.titleBlock.title_ref ?? ""),
+          ...ctx.sheets.filter((s) => s.sheetType === "site_plan").flatMap((s) => s.textBlocks.map((l) => l.text)),
+        ].join(" ");
+        const missing = (doc.fields.titles.match(/\d{4,7}\/\d{1,4}/g) ?? []).filter((t) => !ourText.includes(t));
+        const onCover = (doc.fields.titles.match(/\d{4,7}\/\d{1,4}/g) ?? []).filter((t) => !ours.coverText.includes(t));
+        if (missing.length > 0) {
+          findings.push({ sheetId: null, message: `${doc.firm} covers title ${missing.join(", ")}, which isn't shown on the drawings.`, bbox: null });
+        } else if (onCover.length > 0) {
+          findings.push({
+            sheetId: cover?.id ?? null,
+            message: `${doc.firm} covers titles ${doc.fields.titles}; the cover only shows ${(ours.coverText.match(/\d{4,7}\/\d{1,4}/g) ?? []).join(", ") || "no title"}. Show ${onCover.join(", ")} until the titles are consolidated.`,
+            bbox: null,
+            severity: "minor",
+          });
+        }
+      }
+
       // Client names: flag near-misses such as "Gunston" for "Gunton" (first names are often abbreviated).
       const client = doc.fields.client;
       const ourNames = (ours.project ?? ours.coverText).toLowerCase().split(/[^a-z']+/).filter((w) => w.length >= 3);
@@ -98,7 +121,7 @@ export const check: Check = {
       const ourAddress = ctx.project.address ?? ours.project ?? ours.coverText;
       if (address && ourAddress) {
         const key = addressKey(address);
-        const text = ourAddress.toLowerCase().replace(/\s+/g, "");
+        const text = normaliseAddress(ourAddress).replace(/\s+/g, "");
         if (key.length === 2 && !(text.includes(key[0]) && text.includes(key[1]))) {
           findings.push({
             sheetId: null,

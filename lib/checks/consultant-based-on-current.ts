@@ -9,6 +9,7 @@ const NAMES: Record<Discipline, string> = {
   energy: "energy assessment",
   bushfire: "bushfire assessment",
   geotech: "geotechnical report",
+  planning: "planning permit",
   other: "consultant document",
 };
 

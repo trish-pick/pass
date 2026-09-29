@@ -45,8 +45,13 @@ export function valuesAgree(consultant: string, ours: string): boolean {
 
 /** The street number and name, e.g. "111 RAVENSWOOD ROAD" -> ["111", "ravenswood"]. */
 export function addressKey(address: string): string[] {
-  const m = address.toLowerCase().match(/(\d+[a-z]?(?:\s*[-&]\s*\d+[a-z]?)?)\s+([a-z']+)/);
-  return m ? [m[1].replace(/\s+/g, ""), m[2]] : [];
+  const m = normaliseAddress(address).match(/(\d+[a-z]?(?:-\d+[a-z]?)?)\s+([a-z']+)/);
+  return m ? [m[1], m[2]] : [];
+}
+
+/** Lower case, with "7 & 9" and "7 and 9" written as "7-9". */
+export function normaliseAddress(text: string): string {
+  return text.toLowerCase().replace(/(\d)\s*(?:&|and|-)\s*(\d)/g, "$1-$2");
 }
 
 /** The practice's own values for comparison: most common title block values, and the cover's. */

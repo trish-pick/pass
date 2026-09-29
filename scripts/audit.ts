@@ -17,7 +17,7 @@ import type { ConsultantDocument } from "@/lib/consultants/types";
 import { copy } from "@/lib/copy";
 import { appliesTo, runChecklist } from "@/lib/checks/engine";
 import { getCheck } from "@/lib/checks/index";
-import { buildCorrectionList, correctionListCsv } from "@/lib/export/correction-list";
+import { buildCorrectionList, correctionListCsv, type ReviewerItem } from "@/lib/export/correction-list";
 import { correctionListPdf } from "@/lib/export/correction-list-pdf";
 import { extractPages } from "@/lib/pdf/extract";
 import { parseSet } from "@/lib/pdf/parse-set";
@@ -88,7 +88,20 @@ for (const e of errors) console.error(`Check ${e.checkType} could not run: ${e.e
 const reviewerItems = items
   .filter((i) => getCheck(i.checkType)?.mode === "reviewer")
   .filter((i) => !i.appliesTo?.length || sheets.some((s) => appliesTo(s.sheetType, i.appliesTo)))
-  .map((i) => ({ label: i.label, appliesTo: i.appliesTo, aiLater: getCheck(i.checkType)?.source === "ai" }));
+  .map((i): ReviewerItem => ({ label: i.label, appliesTo: i.appliesTo, aiLater: getCheck(i.checkType)?.source === "ai" }));
+
+// Permit conditions become reviewer items, under the permit's own heading.
+for (const doc of consultantDocs) {
+  for (const c of doc.conditions ?? []) {
+    const firstSentence = c.text.split(/(?<=\.)\s/)[0] ?? "";
+    reviewerItems.push({
+      label: `Condition ${c.number} ${c.title.charAt(0)}${c.title.slice(1).toLowerCase()}: ${firstSentence.length > 160 ? `${firstSentence.slice(0, 157)}...` : firstSentence}`,
+      appliesTo: null,
+      aiLater: false,
+      group: `Planning permit ${doc.fields.permit_no ?? doc.fileName}: conditions`,
+    });
+  }
+}
 
 const list = buildCorrectionList({
   projectName: project.name,

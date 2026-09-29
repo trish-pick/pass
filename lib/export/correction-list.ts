@@ -14,7 +14,14 @@ export type CorrectionRow = {
 export type CorrectionGroup = { heading: string; rows: CorrectionRow[] };
 
 /** A checklist item the reviewer ticks off by eye (see Check.mode). */
-export type ReviewerItem = { label: string; appliesTo: string[] | null; note?: string; aiLater?: boolean };
+export type ReviewerItem = {
+  label: string;
+  appliesTo: string[] | null;
+  note?: string;
+  aiLater?: boolean;
+  /** Heading to list the item under, instead of one derived from appliesTo (e.g. "Planning permit DA 2026/30"). */
+  group?: string;
+};
 export type ReviewerGroup = { heading: string; items: ReviewerItem[] };
 
 export type CorrectionList = {
@@ -103,7 +110,7 @@ export function buildCorrectionList(input: {
 function groupReviewerItems(items: ReviewerItem[]): ReviewerGroup[] {
   const groups = new Map<string, ReviewerItem[]>();
   for (const item of items) {
-    const heading = sheetTypeHeading(item.appliesTo);
+    const heading = item.group ?? sheetTypeHeading(item.appliesTo);
     groups.set(heading, [...(groups.get(heading) ?? []), item]);
   }
   return [...groups.entries()].map(([heading, list]) => ({ heading, items: list }));

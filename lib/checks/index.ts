@@ -11,6 +11,7 @@ import { check as consultantBasedOnCurrent } from "./consultant-based-on-current
 import { check as consultantStatusFinal } from "./consultant-status-final";
 import { check as consultantValuesMatch } from "./consultant-values-match";
 import { check as coverSheetConsistent } from "./cover-sheet-consistent";
+import { check as endorsedPlansMatch } from "./endorsed-plans-match";
 import { check as energyWindowsMatch } from "./energy-windows-match";
 import { check as forbiddenText } from "./forbidden-text";
 import { check as manualReview } from "./manual-review";
@@ -45,6 +46,7 @@ const checks: Check[] = [
   consultantValuesMatch,
   consultantStatusFinal,
   energyWindowsMatch,
+  endorsedPlansMatch,
   // Listed for the reviewer (see Check.mode). The AI ones run from Phase 2.
   visualElementPresent,
   aiReviewNote,

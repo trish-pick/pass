@@ -614,6 +614,26 @@
           "params": {}
         },
         {
+          "label": "Drawings match the plans endorsed by the planning permit",
+          "check_type": "endorsed_plans_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Planning permit owners, address and titles match the drawings",
+          "check_type": "consultant_values_match",
+          "severity": "major",
+          "params": {
+            "discipline": "planning"
+          }
+        },
+        {
+          "label": "Check for additions not shown on the endorsed plans (e.g. new roofs, decks, structures)",
+          "check_type": "manual_review",
+          "severity": "minor",
+          "params": {}
+        },
+        {
           "label": "Bushfire assessment is based on the current drawings",
           "check_type": "consultant_based_on_current",
           "severity": "major",
@@ -2448,6 +2468,44 @@
         {
           "key": "client",
           "pattern": "Reference No\\.\\s*GL\\w+\\s*\\|\\s*([^|]+)"
+        }
+      ]
+    },
+    {
+      "firm": "Planning permit",
+      "discipline": "planning",
+      "match": [
+        "Land Use Planning and Approvals Act"
+      ],
+      "conditions": true,
+      "fields": [
+        {
+          "key": "permit_no",
+          "pattern": "PLANNING PERMIT NO:\\s*([^|]+?)\\s*(?:\\||$)"
+        },
+        {
+          "key": "client",
+          "pattern": "Owner:\\s*([^|]+?)\\s*(?:\\||$)"
+        },
+        {
+          "key": "titles",
+          "pattern": "\\(CT;?\\s*([^)]+)\\)"
+        },
+        {
+          "key": "address",
+          "pattern": "Address of Development:\\s*([^|]+?)\\s*(?:\\||$)"
+        },
+        {
+          "key": "endorsed_job",
+          "pattern": "Job no\\.?\\s*([A-Z]*-?\\d{4,6})"
+        },
+        {
+          "key": "endorsed_revision",
+          "pattern": "Job no\\.?[\\s\\S]{0,120}?revision\\s+(\\w+)"
+        },
+        {
+          "key": "endorsed_date",
+          "pattern": "revision\\s+\\w+,?\\s*dated\\s+(\\d{1,2}\\s+[A-Za-z]+(?:\\s*\\|\\s*|\\s+)\\d{4})"
         }
       ]
     }
