@@ -19,6 +19,7 @@ import { appliesTo, runChecklist } from "@/lib/checks/engine";
 import { getCheck } from "@/lib/checks/index";
 import { buildCorrectionList, correctionListCsv, type ReviewerItem } from "@/lib/export/correction-list";
 import { correctionListPdf } from "@/lib/export/correction-list-pdf";
+import { markupPdf } from "@/lib/export/markup-pdf";
 import { extractPages } from "@/lib/pdf/extract";
 import { parseSet } from "@/lib/pdf/parse-set";
 
@@ -119,7 +120,11 @@ const list = buildCorrectionList({
 fs.mkdirSync(values.out!, { recursive: true });
 const base = path.join(values.out!, `${path.basename(file, ".pdf")} correction list`);
 fs.writeFileSync(`${base}.csv`, correctionListCsv(list));
-fs.writeFileSync(`${base}.pdf`, await correctionListPdf(list));
+const listPdf = await correctionListPdf(list);
+fs.writeFileSync(`${base}.pdf`, listPdf);
+const markedUp = await markupPdf({ original: fs.readFileSync(file), sheets, findings, list, correctionListPdf: listPdf });
+const markedUpPath = path.join(values.out!, `${path.basename(file, ".pdf")} marked up.pdf`);
+fs.writeFileSync(markedUpPath, markedUp);
 
 console.log(`${sheets.length} sheets, ${findings.length} items in ${Date.now() - started} ms`);
 for (const group of list.groups) {
@@ -127,4 +132,4 @@ for (const group of list.groups) {
   for (const row of group.rows) console.log(`  [${row.severity}] ${row.message}  (${row.location})`);
 }
 console.log(`\n${reviewerItems.length} reviewer checks listed for ticking off by eye.`);
-console.log(`\nWrote ${base}.csv and ${base}.pdf`);
+console.log(`\nWrote ${base}.csv, ${base}.pdf and ${markedUpPath}`);

@@ -61,7 +61,7 @@ describe("correction list", () => {
       ["Site plan", 2],
       ["Every sheet except the cover", 1],
     ]);
-    expect(correctionListCsv(list)).toContain("Site plan,,reviewer check,North point shown,,,Reviewer (AI from Phase 2)");
+    expect(correctionListCsv(list)).toContain(",Site plan,,reviewer check,North point shown,,,Reviewer (AI from Phase 2)");
   });
 
   it("describes locations in plain terms", () => {
@@ -73,7 +73,7 @@ describe("correction list", () => {
 
   it("writes CSV with quoting and marks AI items for verification", () => {
     const csv = correctionListCsv(list);
-    expect(csv.split("\r\n")[0]).toBe("Sheet,Sheet title,Severity,Item,Location,Checklist item,Source");
+    expect(csv.split("\r\n")[0]).toBe("No.,Sheet,Sheet title,Severity,Item,Location,Checklist item,Source");
     expect(csv).toContain('"set-wide, with ""quotes"", commas"');
     expect(csv).toContain("AI (please verify)");
   });

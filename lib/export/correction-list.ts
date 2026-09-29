@@ -2,6 +2,10 @@ import type { EngineFinding } from "@/lib/checks/engine";
 import type { BBox, ParsedSheet, Severity } from "@/lib/checks/types";
 
 export type CorrectionRow = {
+  /** Item number, matching the numbered cloud on the marked-up PDF. */
+  no: number;
+  /** Index of the finding in the input, for placing markups. */
+  findingIndex: number;
   sheetNumber: string;
   sheetTitle: string;
   severity: Severity;
@@ -52,12 +56,16 @@ export function buildCorrectionList(input: {
   itemLabels: Map<string, string>;
   reviewerItems?: ReviewerItem[];
 }): CorrectionList {
-  const open = input.findings.filter((f) => (f.status ?? "open") === "open");
+  const open = input.findings
+    .map((f, index) => ({ ...f, index }))
+    .filter((f) => (f.status ?? "open") === "open");
   const sheetById = new Map(input.sheets.map((s) => [s.id, s]));
 
   const toRow = (f: (typeof open)[number]): CorrectionRow & { y: number } => {
     const sheet = f.sheetId ? sheetById.get(f.sheetId) : undefined;
     return {
+      no: 0,
+      findingIndex: f.index,
       sheetNumber: sheet ? (sheet.sheetNumber ?? `Page ${sheet.pageIndex + 1}`) : "Whole set",
       sheetTitle: sheet?.sheetTitle ?? "",
       severity: f.severity,
@@ -87,6 +95,10 @@ export function buildCorrectionList(input: {
     const name = sheet.sheetNumber ?? `Page ${sheet.pageIndex + 1}`;
     groups.push({ heading: sheet.sheetTitle ? `${name}  ${sheet.sheetTitle}` : name, rows: rows.map(strip) });
   }
+
+  // Number items in reading order of the list.
+  let no = 0;
+  for (const g of groups) for (const r of g.rows) r.no = ++no;
 
   const counts: Record<Severity, number> = { critical: 0, major: 0, minor: 0 };
   for (const f of open) counts[f.severity]++;
@@ -145,9 +157,10 @@ export function describeLocation(bbox: BBox | null, sheet: ParsedSheet | undefin
 }
 
 export function correctionListCsv(list: CorrectionList): string {
-  const header = ["Sheet", "Sheet title", "Severity", "Item", "Location", "Checklist item", "Source"];
+  const header = ["No.", "Sheet", "Sheet title", "Severity", "Item", "Location", "Checklist item", "Source"];
   const rows = list.groups.flatMap((g) =>
     g.rows.map((r) => [
+      String(r.no),
       r.sheetNumber,
       r.sheetTitle,
       r.severity,
@@ -158,7 +171,7 @@ export function correctionListCsv(list: CorrectionList): string {
     ]),
   );
   const reviewer = list.reviewerGroups.flatMap((g) =>
-    g.items.map((i) => [g.heading, "", "reviewer check", i.note ? `${i.label} (${i.note})` : i.label, "", "", i.aiLater ? "Reviewer (AI from Phase 2)" : "Reviewer"]),
+    g.items.map((i) => ["", g.heading, "", "reviewer check", i.note ? `${i.label} (${i.note})` : i.label, "", "", i.aiLater ? "Reviewer (AI from Phase 2)" : "Reviewer"]),
   );
   const escape = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
   return [header, ...rows, ...reviewer].map((r) => r.map(escape).join(",")).join("\r\n") + "\r\n";

@@ -10,24 +10,24 @@ const MARGIN = 48;
 const INK = rgb(0.13, 0.15, 0.18);
 const MUTED = rgb(0.42, 0.45, 0.5);
 const RULE = rgb(0.85, 0.86, 0.88);
-const SEVERITY_COLOUR: Record<Severity, ReturnType<typeof rgb>> = {
+export const SEVERITY_COLOUR: Record<Severity, ReturnType<typeof rgb>> = {
   critical: rgb(0.75, 0.22, 0.17),
   major: rgb(0.8, 0.52, 0.1),
   minor: rgb(0.4, 0.45, 0.55),
 };
-const SEVERITY_LABEL: Record<Severity, string> = { critical: "Critical", major: "Major", minor: "Minor" };
+export const SEVERITY_LABEL: Record<Severity, string> = { critical: "Critical", major: "Major", minor: "Minor" };
 
 /** Standard PDF fonts only cover WinAnsi; swap anything else for a close equivalent. */
-function safe(text: string): string {
+export function safe(text: string): string {
   return text
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"')
-    .replace(/[–—]/g, "-")
-    .replace(/²/g, "2")
-    .replace(/[^\x20-\x7E -ÿ]/g, "?");
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/\u2192/g, "->")
+    .replace(/[^\x20-\x7E\u00A0-\u00FF]/g, "?");
 }
 
-function wrap(text: string, font: PDFFont, size: number, width: number): string[] {
+export function wrap(text: string, font: PDFFont, size: number, width: number): string[] {
   const lines: string[] = [];
   let current = "";
   for (const word of safe(text).split(/\s+/)) {
@@ -129,15 +129,16 @@ export async function correctionListPdf(list: CorrectionList): Promise<Uint8Arra
     y -= 16;
 
     for (const row of group.rows) {
-      const message = wrap(row.message + (row.source === "ai" ? ` (${copy.audit.aiFindingLabel})` : ""), regular, 10, width - 90);
+      const message = wrap(row.message + (row.source === "ai" ? ` (${copy.audit.aiFindingLabel})` : ""), regular, 10, width - 110);
       const detail = `${row.location}  ·  ${row.checklistItem}`;
       ensure(message.length * 13 + 22);
       page.drawRectangle({ x: MARGIN, y: y - 2, width: 6, height: 9, color: SEVERITY_COLOUR[row.severity] });
-      text(page, SEVERITY_LABEL[row.severity], MARGIN + 12, y, 9, bold, SEVERITY_COLOUR[row.severity]);
+      text(page, `#${row.no}`, MARGIN + 10, y, 9, bold);
+      text(page, SEVERITY_LABEL[row.severity], MARGIN + 32, y, 9, bold, SEVERITY_COLOUR[row.severity]);
       text(page, "[  ]", MARGIN + width - 16, y, 9, regular, MUTED);
-      message.forEach((line, i) => text(page, line, MARGIN + 70, y - i * 13, 10));
+      message.forEach((line, i) => text(page, line, MARGIN + 90, y - i * 13, 10));
       y -= message.length * 13;
-      text(page, detail.replace("·", "-"), MARGIN + 70, y, 8, regular, MUTED);
+      text(page, detail.replace("·", "-"), MARGIN + 90, y, 8, regular, MUTED);
       y -= 18;
     }
   }
