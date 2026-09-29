@@ -239,3 +239,7 @@ Keep the interface calm and uncluttered. Branding is driven by a theme file so t
 - **Scripts** run with `tsx`. The package is `"type": "module"`, since MuPDF uses top-level await.
 
 @AGENTS.md
+
+## Backlog (agreed with Trish, not yet done)
+
+- Correction list PDF, reviewer checks intro: replace the "Phase 2 AI checks" wording with plain language, e.g. "Items marked AI are visual checks. For now, check them by eye. A later version of PASS will check them for you."
