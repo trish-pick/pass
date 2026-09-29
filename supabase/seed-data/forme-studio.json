@@ -569,6 +569,82 @@
           "params": {}
         },
         {
+          "label": "Engineering is based on the current drawings",
+          "check_type": "consultant_based_on_current",
+          "severity": "critical",
+          "params": {
+            "discipline": "structural"
+          }
+        },
+        {
+          "label": "Engineering site and wind classification match the cover",
+          "check_type": "consultant_values_match",
+          "severity": "major",
+          "params": {
+            "discipline": "structural"
+          }
+        },
+        {
+          "label": "Consultant documents issued for construction",
+          "check_type": "consultant_status_final",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Energy assessment is based on the current drawings",
+          "check_type": "consultant_based_on_current",
+          "severity": "major",
+          "params": {
+            "discipline": "energy"
+          }
+        },
+        {
+          "label": "Energy rating matches the cover",
+          "check_type": "consultant_values_match",
+          "severity": "major",
+          "params": {
+            "discipline": "energy"
+          }
+        },
+        {
+          "label": "Window schedule matches the energy assessment",
+          "check_type": "energy_windows_match",
+          "severity": "major",
+          "params": {}
+        },
+        {
+          "label": "Bushfire assessment is based on the current drawings",
+          "check_type": "consultant_based_on_current",
+          "severity": "major",
+          "params": {
+            "discipline": "bushfire"
+          }
+        },
+        {
+          "label": "BAL matches the cover",
+          "check_type": "consultant_values_match",
+          "severity": "major",
+          "params": {
+            "discipline": "bushfire"
+          }
+        },
+        {
+          "label": "Geotech report is based on the current siting",
+          "check_type": "consultant_based_on_current",
+          "severity": "minor",
+          "params": {
+            "discipline": "geotech"
+          }
+        },
+        {
+          "label": "Geotech site and wind classification match the cover",
+          "check_type": "consultant_values_match",
+          "severity": "major",
+          "params": {
+            "discipline": "geotech"
+          }
+        },
+        {
           "label": "Cross-check any conditions on the planning permit are met within the documentation",
           "check_type": "manual_review",
           "severity": "minor",
@@ -2192,6 +2268,163 @@
           "applies_to": [
             "setout"
           ]
+        }
+      ]
+    }
+  ],
+  "consultants": [
+    {
+      "firm": "RES Engineering",
+      "discipline": "structural",
+      "match": [
+        "resengco",
+        "RES Engineering"
+      ],
+      "fields": [
+        {
+          "key": "site_class",
+          "label": "SITE CLASSIFICATION:",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "wind_class",
+          "label": "WIND SITE CLASS:",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "based_on_job",
+          "label": "BUILDING DRAWINGS No:",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "based_on_revision",
+          "label": "BUILDING DRAWINGS REV:",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "based_on_date",
+          "label": "BUILDING DRAWINGS DATE:",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "address",
+          "pattern": "\\|\\s*(\\d+[A-Z]?(?:\\s*-\\s*\\d+)?\\s+[A-Za-z' ]+?\\s(?:ROAD|RD|STREET|ST|DRIVE|DR|AVENUE|AVE|PLACE|PL|COURT|CT|CRESCENT|CRES|LANE|WAY|RISE|PARADE|HIGHWAY|HWY|TERRACE|CLOSE|GROVE|BOULEVARD))\\s*\\|",
+          "pages": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "firm": "ExMP",
+      "discipline": "structural",
+      "match": [
+        "exmp.com.au",
+        "trading as ExMP"
+      ],
+      "fields": [
+        {
+          "key": "address",
+          "label": "PROJECT DETAILS:",
+          "direction": "below",
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "consultant_job",
+          "label": "PROJECT No:",
+          "direction": "below",
+          "pages": [
+            0
+          ]
+        }
+      ],
+      "statusPattern": "\\d{1,3}% DESIGN REVIEW|(?:ISSUED )?FOR CONSTRUCTION|FOR (?:BUILDING )?APPROVAL|FOR TENDER|FOR INFORMATION|PRELIMINARY"
+    },
+    {
+      "firm": "Torple Energy",
+      "discipline": "energy",
+      "match": [
+        "torple"
+      ],
+      "fields": [
+        {
+          "key": "star_rating",
+          "pattern": "(\\d{1,2}(?:\\.\\d)?)\\s*Stars"
+        },
+        {
+          "key": "based_on_job",
+          "pattern": "Drawing Reference Number/Date:\\s*([^|/]+?)\\s*/"
+        },
+        {
+          "key": "based_on_date",
+          "pattern": "Drawing Reference Number/Date:\\s*[^|/]+/\\s*([\\d./]+)"
+        },
+        {
+          "key": "address",
+          "pattern": "Project Address:\\s*([^|]+)"
+        }
+      ],
+      "windowPattern": "\\b(?<mark>[WD]\\d{1,3})\\s*\\|\\s*(?<height>\\d{3,4})\\s*\\|\\s*(?<width>\\d{3,4})\\s*\\|\\s*(?:awning|sliding|casement|fixed|double[- ]hung|bi-?fold|louvre|tilt|stacker|hinged)"
+    },
+    {
+      "firm": "Rebecca Green & Associates",
+      "discipline": "bushfire",
+      "match": [
+        "Rebecca Green"
+      ],
+      "fields": [
+        {
+          "key": "bal",
+          "pattern": "meet\\s+BAL[\\s-]*(\\d+(?:\\.\\d)?|LOW|FZ)"
+        },
+        {
+          "key": "address",
+          "pattern": "Prepared for \\(Client\\)\\s*\\|[^|]*\\|\\s*([^|]+)"
+        }
+      ]
+    },
+    {
+      "firm": "Geoton",
+      "discipline": "geotech",
+      "match": [
+        "geoton"
+      ],
+      "fields": [
+        {
+          "key": "site_class",
+          "pattern": "CLASS\\s+([A-Z0-9]+)\\s*\\(AS\\s?2870\\)"
+        },
+        {
+          "key": "wind_class",
+          "pattern": "WIND CLASSIFICATION\\s*\\|?\\s*(N\\d|C\\d)\\s*\\(AS\\s?4055\\)"
+        },
+        {
+          "key": "based_on_job",
+          "pattern": "Job Number\\s+([A-Z]*-?\\d{4,6})"
+        },
+        {
+          "key": "based_on_date",
+          "pattern": "dated\\s+([\\d./]+)"
+        },
+        {
+          "key": "based_on_revision",
+          "pattern": "Revision\\s+(\\w+)\\."
+        },
+        {
+          "key": "address",
+          "pattern": "RE:\\s*\\|\\s*Site Classification\\s*\\|\\s*([^|]+)"
         }
       ]
     }

@@ -4,6 +4,7 @@
  *
  *   npm run audit -- <set.pdf> --stage "Building Documentation" --revision Rev03 \
  *     [--job FS25008] [--address "7-9 Leads Ave"] [--name "Hill Gunton"] [--out out/] \
+ *     [--consultant engineering.pdf --consultant energy.pdf ...] \
  *     [--seed supabase/seed-data/forme-studio.json]
  */
 import fs from "node:fs";
@@ -11,6 +12,8 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import { fromSeed, type PracticeSeed } from "@/lib/audit/local";
+import { identifyFirm, readConsultantDocument } from "@/lib/consultants/extract";
+import type { ConsultantDocument } from "@/lib/consultants/types";
 import { copy } from "@/lib/copy";
 import { appliesTo, runChecklist } from "@/lib/checks/engine";
 import { getCheck } from "@/lib/checks/index";
@@ -29,6 +32,7 @@ const { values, positionals } = parseArgs({
     name: { type: "string" },
     out: { type: "string", default: "out" },
     seed: { type: "string", default: "supabase/seed-data/forme-studio.json" },
+    consultant: { type: "string", multiple: true, default: [] },
   },
 });
 
@@ -47,6 +51,20 @@ const pages = extractPages(fs.readFileSync(file), (done, total) => {
 process.stdout.write("\n");
 
 const { sheets } = parseSet(pages, seed.profile);
+
+// Consultant documents to compare against, each read with its firm's profile.
+const consultantDocs: ConsultantDocument[] = [];
+for (const path_ of values.consultant ?? []) {
+  const cPages = extractPages(fs.readFileSync(path_));
+  const profile = identifyFirm(cPages, seed.consultants ?? []);
+  if (!profile) {
+    console.error(`No consultant profile recognises ${path_}; skipped. Add the firm to the seed data.`);
+    continue;
+  }
+  const doc = readConsultantDocument(cPages, path.basename(path_), profile, seed.profile);
+  consultantDocs.push(doc);
+  console.log(`Read ${profile.firm} (${profile.discipline}): ${Object.entries(doc.fields).map(([k, v]) => `${k}=${v}`).join(", ")}`);
+}
 const project = {
   name: values.name ?? path.basename(file, ".pdf"),
   projectNumber: values.job ?? null,
@@ -59,6 +77,7 @@ const ctx = {
   profile: seed.profile,
   standardNotes,
   dictionary: seed.dictionary,
+  consultantDocs,
 };
 
 const started = Date.now();

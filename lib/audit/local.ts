@@ -1,5 +1,6 @@
 import type { ChecklistItemInput } from "@/lib/checks/engine";
 import type { CheckContext, PracticeProfile, Severity, StandardNote } from "@/lib/checks/types";
+import type { ConsultantProfile } from "@/lib/consultants/types";
 
 /**
  * The shape of supabase/seed-data/<practice>.json: a practice's profile,
@@ -12,6 +13,8 @@ export type PracticeSeed = {
   profile: PracticeProfile;
   standardNotes: { code: string; stage: string | null; required: boolean; text: string }[];
   dictionary: string[];
+  /** How to read each regular consultant's documents. */
+  consultants?: ConsultantProfile[];
   checklists: {
     stage: string;
     name: string;

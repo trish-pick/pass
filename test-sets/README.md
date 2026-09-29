@@ -27,3 +27,5 @@ npm run audit -- "test-sets/My Set.pdf" --stage "Building Documentation" --revis
 ```
 
 This writes a correction list, as PDF and CSV, to `out/`.
+
+To compare against consultant documents, add each one with `--consultant`, e.g. `--consultant "test-sets/Engineering.pdf" --consultant "test-sets/Energy Rating.pdf"`. PASS recognises the firm from its profile in the seed data and skips any document it doesn't recognise.

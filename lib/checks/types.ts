@@ -1,3 +1,5 @@
+import type { ConsultantDocument } from "@/lib/consultants/types";
+
 /**
  * The check engine interface (brief section 6).
  *
@@ -88,6 +90,8 @@ export type CheckContext = {
   standardNotes: StandardNote[];
   /** Organisation dictionary terms, for the spelling check. */
   dictionary: string[];
+  /** Consultant documents attached to this set (engineering, energy, bushfire, geotech...). */
+  consultantDocs?: ConsultantDocument[];
 };
 
 /** What a check returns. The engine adds audit, checklist item, severity and source. */
