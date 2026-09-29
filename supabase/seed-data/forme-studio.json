@@ -229,6 +229,7 @@
     }
   ],
   "dictionary": [
+    "accred",
     "blackwood",
     "breaky",
     "bsn",
@@ -2337,6 +2338,15 @@
           "key": "address",
           "label": "PROJECT DETAILS:",
           "direction": "below",
+          "maxLines": 2,
+          "pages": [
+            0
+          ]
+        },
+        {
+          "key": "client",
+          "label": "CLIENT TITLE:",
+          "direction": "below",
           "pages": [
             0
           ]
@@ -2348,6 +2358,11 @@
           "pages": [
             0
           ]
+        },
+        {
+          "key": "site_class",
+          "label": "SOIL CLASSIFICATION",
+          "direction": "right"
         }
       ],
       "statusPattern": "\\d{1,3}% DESIGN REVIEW|(?:ISSUED )?FOR CONSTRUCTION|FOR (?:BUILDING )?APPROVAL|FOR TENDER|FOR INFORMATION|PRELIMINARY"
@@ -2392,6 +2407,10 @@
         {
           "key": "address",
           "pattern": "Prepared for \\(Client\\)\\s*\\|[^|]*\\|\\s*([^|]+)"
+        },
+        {
+          "key": "client",
+          "pattern": "Prepared for \\(Client\\)\\s*\\|\\s*([^|]+)"
         }
       ]
     },
@@ -2425,6 +2444,10 @@
         {
           "key": "address",
           "pattern": "RE:\\s*\\|\\s*Site Classification\\s*\\|\\s*([^|]+)"
+        },
+        {
+          "key": "client",
+          "pattern": "Reference No\\.\\s*GL\\w+\\s*\\|\\s*([^|]+)"
         }
       ]
     }

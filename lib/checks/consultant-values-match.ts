@@ -76,6 +76,23 @@ export const check: Check = {
         }
       }
 
+      // Client names: flag near-misses such as "Gunston" for "Gunton" (first names are often abbreviated).
+      const client = doc.fields.client;
+      const ourNames = (ours.project ?? ours.coverText).toLowerCase().split(/[^a-z']+/).filter((w) => w.length >= 3);
+      if (client && ourNames.length > 0) {
+        const theirNames = client.toLowerCase().split(/[^a-z']+/).filter((w) => w.length >= 3 && !["and", "mr", "mrs", "ms"].includes(w));
+        const misspelt = theirNames.filter(
+          (w) => !ourNames.includes(w) && ourNames.some((o) => Math.abs(o.length - w.length) <= 2 && editDistance(o, w) <= 2),
+        );
+        if (misspelt.length > 0) {
+          findings.push({
+            sheetId: null,
+            message: `${possessive(doc.firm)} document names the client "${client}", which doesn't match the drawings (${ours.project ?? "cover"}). Check the spelling of ${misspelt.map((w) => `"${w.toUpperCase()}"`).join(", ")}.`,
+            bbox: null,
+          });
+        }
+      }
+
       // Address
       const address = doc.fields.address;
       const ourAddress = ctx.project.address ?? ours.project ?? ours.coverText;
@@ -94,3 +111,13 @@ export const check: Check = {
     return findings;
   },
 };
+
+function editDistance(a: string, b: string): number {
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[b.length];
+}

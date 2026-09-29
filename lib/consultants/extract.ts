@@ -32,7 +32,7 @@ export function readConsultantDocument(
       let value: string | undefined;
       if (rule.label) {
         value = readTitleBlock(page.lines, [
-          { key: rule.key, label: rule.label, required: false, direction: rule.direction ?? "right" },
+          { key: rule.key, label: rule.label, required: false, direction: rule.direction ?? "right", maxLines: rule.maxLines },
         ])[rule.key]?.value;
       } else if (rule.pattern) {
         value = texts[i].match(new RegExp(rule.pattern, "i"))?.[1];

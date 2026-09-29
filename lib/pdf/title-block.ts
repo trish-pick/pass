@@ -81,7 +81,8 @@ function findInDirection(
     const right = candidates
       .filter((l) => l.bbox.x >= lb.x + lb.width - 2 && l.bbox.x <= lb.x + lb.width + RIGHT_GAP)
       .filter((l) => overlapY(l.bbox, lb, 1))
-      .sort((a, b) => a.bbox.x - b.bbox.x);
+      // Most level with the label first (tightly stacked columns overlap), then nearest.
+      .sort((a, b) => Math.round(centreGap(a.bbox, lb) / 3) - Math.round(centreGap(b.bbox, lb) / 3) || a.bbox.x - b.bbox.x);
     const first = right[0];
     return first ? { value: first.text.trim(), bbox: first.bbox, labelBBox: lb } : null;
   }
@@ -136,4 +137,8 @@ function stripLabel(text: string, key: string): string {
   }
   if (matched < key.length) return "";
   return text.slice(i).replace(/^[\s:.]+/, "").trim();
+}
+
+function centreGap(a: BBox, b: BBox): number {
+  return Math.abs(a.y + a.height / 2 - (b.y + b.height / 2));
 }

@@ -138,6 +138,20 @@ describe("consultant checks", () => {
     expect(await run("consultant_values_match", [doc({ discipline: "bushfire", fields: { bal: "12.5" } })], { discipline: "bushfire" })).toEqual([]);
   });
 
+  it("flags a near-miss on the client's name but not abbreviated first names", async () => {
+    expect(await run("consultant_values_match", [doc({ fields: { client: "K. HILL & D. GUNSTON" } })])).toEqual([]);
+    const { getCheck } = await import("@/lib/checks/index");
+    const withClient = sheets();
+    withClient[1].titleBlock.project = "K.Hill + D.Gunton PROPOSED NEW RESIDENCE";
+    const out = await getCheck("consultant_values_match")!.run(
+      context(withClient, {
+        consultantDocs: [doc({ fields: { client: "K. HILL & D. GUNSTON" } }), doc({ firm: "Other", fields: { client: "Kate and Dan Hill" } })],
+      }),
+      {},
+    );
+    expect(out.map((f) => f.message)).toEqual([expect.stringContaining('Check the spelling of "GUNSTON"')]);
+  });
+
   it("flags consultant documents not issued for construction", async () => {
     expect(await run("consultant_status_final", [doc({ statuses: ["50% DESIGN REVIEW"] }), doc({ statuses: ["FOR CONSTRUCTION"] })])).toEqual([
       'Sample Engineering\'s documents (doc.pdf) are marked "50% DESIGN REVIEW", not issued for construction.',

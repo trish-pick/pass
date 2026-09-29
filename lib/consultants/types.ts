@@ -13,6 +13,8 @@ export type ConsultantFieldRule = {
   /** Read the value next to this printed label (like a title block field)... */
   label?: string;
   direction?: "right" | "below";
+  /** Lines to read for a labelled value that runs over several lines. Default 1. */
+  maxLines?: number;
   /** ...or take the first capture group of this regular expression, matched against the document text. */
   pattern?: string;
   /** Only look on these pages (0-based). Default: all pages. */
